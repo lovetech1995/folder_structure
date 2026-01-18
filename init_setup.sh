@@ -1,5 +1,7 @@
 #!/bin/bash
-PROJECT_NAME=$0
+INPUT_NAME=$0
+
+PROJECT_NAME=${INPUT_NAME%.*}
 
 # --- PHẦN 1: Chạy script setup project ---
 echo "------------------------------------------------"
@@ -18,7 +20,7 @@ else
     echo "Có lỗi xảy ra trong quá trình setup project."
 fi
 
-echo ""
+ 
 
 # --- PHẦN 2: Hỏi cài đặt GEMINI.md ---
 read -p "Bạn có muốn cài đặt gemini.md vào thư mục agent/ không? (y/n): " choice
