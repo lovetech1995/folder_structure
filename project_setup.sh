@@ -1,15 +1,16 @@
 #!/bin/bash
 
+# Thay vì kiểm tra $1, ta chủ động hỏi người dùng
+echo "--- Khởi tạo dự án ---"
+read -p "Nhập tên dự án của bạn: " PROJECT_NAME
 
-# Hỏi người dùng nhập tên
-read -p "Vui lòng nhập tên dự án: " PROJECT_NAME
-
-# Kiểm tra nếu người dùng bỏ trống
+# Kiểm tra nếu người dùng vẫn không chịu gõ gì mà nhấn Enter luôn
 if [ -z "$PROJECT_NAME" ]; then
-  echo "Lỗi: Tên dự án không được để trống."
+  echo "Lỗi: Bạn chưa nhập gì cả, tên dự án không được để trống!"
   exit 1
 fi
 
+echo "Đang cấu hình cho dự án: $PROJECT_NAME"
 
 echo "--------------------------------------------------"
 echo "Bắt đầu tạo dự án React: $PROJECT_NAME"
