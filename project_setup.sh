@@ -938,7 +938,7 @@ export const LoadingScreen = () => {
 
 EOF
 
-cat > src/components/loading.js <<EOF
+cat > src/component/loading.js <<EOF
 import React from "react";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";

@@ -1,6 +1,5 @@
 #!/bin/bash
-
-PROJECT_NAME="my_assistance"
+PROJECT_NAME=$0
 
 # --- PHẦN 1: Chạy script setup project ---
 echo "------------------------------------------------"
