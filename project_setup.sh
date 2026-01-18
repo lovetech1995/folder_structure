@@ -1,7 +1,15 @@
 #!/bin/bash
 
-# Cấu hình tên dự án
-PROJECT_NAME="my_assistance"
+
+# Hỏi người dùng nhập tên
+read -p "Vui lòng nhập tên dự án: " PROJECT_NAME
+
+# Kiểm tra nếu người dùng bỏ trống
+if [ -z "$PROJECT_NAME" ]; then
+  echo "Lỗi: Tên dự án không được để trống."
+  exit 1
+fi
+
 
 echo "--------------------------------------------------"
 echo "Bắt đầu tạo dự án React: $PROJECT_NAME"
@@ -67,6 +75,8 @@ mkdir -p src/screen/100_Dev
 
 mkdir -p src/store/default
 
+mkdir -p src/utils
+
 echo "Đã tạo xong thư mục."
 
 # 4. Setup Config & Tailwind
@@ -85,6 +95,28 @@ module.exports = {
   plugins: [],
 }
 EOF
+
+
+#appjs
+cat > src/App.js <<EOF
+import React from "react";
+import { App, ConfigProvider } from "antd";
+import AppRoot from "screen/00_Nav/app_root";
+
+
+const MyApp = () => {
+  return (
+    <ConfigProvider theme={{}}>
+      <App>
+        <AppRoot />
+      </App>
+    </ConfigProvider>
+  );
+};
+
+export default MyApp;
+EOF
+
 
 # src/css/common.css
 cat > src/css/common.css <<EOF
@@ -244,7 +276,7 @@ const setDefaultAllSuccess = (dispatch, data) => {
 EOF
 
 # src/store/default/default.reducer.js (Alias to slice hoặc logic riêng)
-cat > src/store/default/default.js <<EOF
+cat > src/store/default/default.reducer.js <<EOF
 import { TYPES } from "./default.type";
 
 const initState = {
@@ -641,9 +673,7 @@ export const useResponsive = () => {
 
 EOF
 
-# Tạo file rỗng trong hook/default để giữ cấu trúc
-touch src/hook/default/index.js
-
+ 
 # 7. Cập nhật index.js và index.css
 echo "Đang cập nhật entry point..."
 
@@ -1095,7 +1125,7 @@ import { Layout, Empty, Button, Row, Col } from "antd";
 import { FiPower } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 // redux
-import { logOut } from "store/user/auth/user_auth.action";
+import { logOut } from "store/user/auth/auth.action";
 
 const { Content } = Layout;
 const BannedScreen = () => {
@@ -1353,8 +1383,7 @@ import { collapseSelector } from "../../../store/bailiff/nav/nav.selector";
 import { useDispatch } from "react-redux";
 import { toggleCollapse } from "store/bailiff/nav/nav.action";
 import { LogoutOutlined } from "@ant-design/icons";
-import { logOut } from "store/user/auth/user_auth.action";
-import DialogAccountInfo from "screen/02_Bailiff/dialog/dialog_account_info";
+import { logOut } from "store/user/auth/auth.action";
 import SEOHelmet from "component/seo/seo_helmet";
 
 const LayoutRoot = () => {
@@ -1429,7 +1458,6 @@ const LayoutRoot = () => {
         <Outlet />
         <LayoutFooter />
       </Layout>
-      <DialogAccountInfo />
       <SEOHelmet />
     </Layout>
   );
@@ -1541,11 +1569,788 @@ cat > src/screen/00_Nav/layout/style.css <<EOF
 EOF
 
 
+cat > src/utils/auth.util.js <<EOF
+const FIREBASE_AUTH_ERROR = {
+  "auth/user-not-found":
+    "Tài khoản không tồn tại. Vui lòng kiểm tra lại email.",
+  "auth/wrong-password": "Mật khẩu không đúng. Vui lòng thử lại.",
+  "auth/invalid-email": "Địa chỉ email không hợp lệ.",
+  "auth/user-disabled": "Tài khoản này đã bị vô hiệu hóa.",
+  "auth/email-already-in-use":
+    "Email này đã được sử dụng bởi một tài khoản khác.",
+  "auth/weak-password":
+    "Mật khẩu quá yếu. Vui lòng chọn mật khẩu khác mạnh hơn.",
+  "auth/too-many-requests":
+    "Bạn đã thực hiện quá nhiều yêu cầu. Vui lòng thử lại sau.",
+  "auth/network-request-failed":
+    "Lỗi mạng. Vui lòng kiểm tra kết nối internet của bạn.",
+  "auth/invalid-credential": "Thông tin đăng nhập không hợp lệ.",
+};
 
-echo "--------------------------------------------------"
-echo "HOÀN TẤT CẤU HÌNH V2!"
+export const getFirebaseAuthErrorMessage = (errorCode) => {
+  return (
+    FIREBASE_AUTH_ERROR[errorCode] || "Đã có lỗi xảy ra. Vui lòng thử lại."
+  );
+};
+EOF
+
+cat > src/utils/generate.function.js <<EOF
+// ------------------------------------  Prepair Functions END  ------------------------------------
+export const makeOrderId = (length) => {
+  let result = "";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+// ------------------------------------  Prepair Functions END  ------------------------------------
+export const makeCode = (length) => {
+  let result = "";
+  const characters = "0123456789";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+EOF
+
+
+cat > src/store/api.js <<EOF
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { REGION } from "store/ref";
+import { getApp } from "firebase/app";
+
+const app = getApp();
+const functions = getFunctions(undefined,REGION);
+
+// get functions api.
+export const getApiFunctions = () => {
+  // :::::::::::: LOGIN :::::::::::::://
+
+  // login operator.
+  const login = httpsCallable(functions, "api-operator-login-token");
+
+
+  // hàm add pin code.
+  const emailSendCode = httpsCallable(
+    functions,
+    "api-email-verification-add-pincode",
+  ); // { email, source },
+  const emailCheckCode = httpsCallable(
+    functions,
+    "api-email-verification-check-pincode",
+  ); // { email, source, pincode},
+
+ 
+
+  // return.
+  return {
+    login,
+    email: {
+      emailSendCode,
+      emailCheckCode,
+    },
+    
+  };
+};
+EOF
+
+
+mkdir -p src/store/auth
+
+cat > src/store/auth/auth.action.js <<EOF
+import moment from "moment";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  fetchSignInMethodsForEmail,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import { TYPES } from "./auth.type";
+import { DATABASE_URL, SOURCE } from "config/config";
+import {
+  getDatabase,
+  ref,
+  set,
+  onDisconnect,
+  serverTimestamp,
+} from "firebase/database";
+import { getApiFunctions } from "../api";
+import { getApp } from "firebase/app";
+import { PROJECT_ID } from "config/config";
+ 
+
+const app = getApp(PROJECT_ID);
+const auth = getAuth(app);
+ 
+
+// -------------------------- Snapshot --------------------------
+const authSub = [];
+export const snapUserAuth = () => (dispatch) => {
+  const unSub = onAuthStateChanged(auth, async (user) => {
+    const uid = user?.uid;
+    const isLogged = uid ? true : false;
+    const reloadUserInfo = user?.reloadUserInfo;
+    const email = user?.email;
+    const displayName = user?.displayName;
+    const permissions = reloadUserInfo?.customAttributes;
+
+    firebasePermissionSuccess(dispatch, permissions);
+    firebaseEmailSuccess(dispatch, email);
+    firebaseAuthSuccess(dispatch, isLogged);
+    firebaseUidSuccess(dispatch, uid);
+   
+  });
+  authSub.push(unSub);
+};
+ 
+export const unSnapUserAuth = () => (dispatch) => {
+  authSub.forEach((subscriber) => {
+    subscriber();
+  });
+  authSub.length = 0;
+};
+
+export const logOut = () => (dispatch) => {
+  signOut(auth);
+};
+
+export const checkEmail =
+  ({ register }, callback) =>
+  (dispatch) => {
+    const email = register.email;
+    console.log({ email });
+    return fetchSignInMethodsForEmail(auth, email)
+      .then((response) => {
+        console.log({ response });
+        if (response.length === 0) {
+          if (callback) {
+            callback({
+              status: 200,
+            });
+          }
+          firebaseRegisterSuccess(dispatch, register);
+        } else {
+          callback({
+            status: 500,
+            data: "Email này đã được sử dụng, xin vui lòng đăng ký email khác",
+          });
+        }
+      })
+      .catch((error) => console.log({ error }));
+  };
+
+export const registerEmailPassword =
+  ({ register }, callback) =>
+  (dispatch) => {
+    const email = register.email;
+    const password = register.password;
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        if (callback) {
+          callback({
+            status: 200,
+            data: user,
+          });
+        }
+      })
+      .catch((error) => {
+        const code = error?.code;
+        if (code === "auth/email-already-in-use") {
+          callback &&
+            callback({
+              status: 500,
+              data: "Email này đã được sử dụng, xin vui lòng đăng ký email khác",
+            });
+        } else {
+          callback &&
+            callback({
+              status: 500,
+              data: error.code,
+            });
+        }
+      });
+  };
+
+// ================ CLOUD FUNCTIONS ==================== //
+
+export const sendEmail =
+  ({ email }, callback) =>
+  (dispatch) => {
+    const apiEmailVerify = getApiFunctions().email.emailSendCode;
+    apiEmailVerify({ email, source: SOURCE })
+      .then((response) => {
+        console.log({ response });
+        const data = response.data;
+        const lastSent = moment().toDate();
+        firebaseGetLastMailSuccess(dispatch, lastSent);
+        if (callback) {
+          callback({ status: 200, data });
+        }
+      })
+      .catch((err) => {
+        callback({ status: 500, data: err?.message || "Invalid Error" });
+      });
+  };
+
+export const verifyEmail =
+  ({ email, pincode }, callback) =>
+  (dispatch) => {
+    const apiEmailVerify = getApiFunctions().email.emailCheckCode;
+    apiEmailVerify({ email, pincode, source: SOURCE })
+      .then((response) => {
+        const data = response.data;
+        if (callback) {
+          callback({ status: 200, data });
+        }
+      })
+      .catch((err) => {
+        console.log({ err });
+        callback({ status: 500, data: err?.message || "Invalid Error" });
+      });
+  };
+
+export const setStepRegister = (step) => (dispatch) => {
+  setRegisterStepSuccess(dispatch, step);
+};
+
+// -------------------------- Dispatch --------------------------
+const firebaseAuthSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.FIREBASE_AUTH_STATUS,
+    payload: data,
+  });
+};
+
+const firebaseUidSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.FIREBASE_AUTH_UID,
+    payload: data,
+  });
+};
+
+const firebasePermissionSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.FIREBASE_AUTH_PERMISSIONS,
+    payload: data,
+  });
+};
+
+const firebaseRegisterSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.FIREBASE_AUTH_REGISTER_SUCCESS,
+    payload: data,
+  });
+};
+
+const setRegisterStepSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.FIREBASE_AUTH_REGISTER_STEP,
+    payload: data,
+  });
+};
+
+const firebaseGetLastMailSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.FIREBASE_AUTH_REGISTER_LASTMAIL,
+    payload: data,
+  });
+};
+
+const firebaseEmailSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.FIREBASE_AUTH_EMAIL,
+    payload: data,
+  });
+};
+
+const firebaseDisplayNameSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.FIREBASE_AUTH_DISPLAYNAME,
+    payload: data,
+  });
+};
+
+const firebasePhotoURLSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.FIREBASE_AUTH_PHOTOURL,
+    payload: data,
+  });
+};
+EOF
+
+
+
+cat > src/store/auth/auth.reducer.js <<EOF
+
+import { TYPES } from "./auth.type";
+
+const initState = {
+  isLogged: null,
+  uid: null,
+  email: null,
+  displayName: null,
+  photoURL: null,
+  permissions: [],
+  //
+  register: null,
+  step: 0,
+  lastMail: null,
+};
+
+const authReducer = (state = initState, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case TYPES.FIREBASE_AUTH_STATUS:
+      return {
+        ...state,
+        isLogged: payload,
+      };
+
+    case TYPES.FIREBASE_AUTH_EMAIL:
+      return {
+        ...state,
+        email: payload,
+      };
+
+    case TYPES.FIREBASE_AUTH_DISPLAYNAME:
+      return {
+        ...state,
+        displayName: payload,
+      };
+
+    case TYPES.FIREBASE_AUTH_PHOTOURL:
+      return {
+        ...state,
+        photoURL: payload,
+      };
+
+    case TYPES.FIREBASE_AUTH_UID:
+      return {
+        ...state,
+        uid: payload,
+      };
+    case TYPES.FIREBASE_AUTH_PERMISSIONS:
+      return {
+        ...state,
+        permissions: payload,
+      };
+    case TYPES.FIREBASE_AUTH_REGISTER_SUCCESS:
+      return {
+        ...state,
+        register: payload,
+      };
+    case TYPES.FIREBASE_AUTH_REGISTER_STEP:
+      return {
+        ...state,
+        step: payload,
+      };
+    case TYPES.FIREBASE_AUTH_REGISTER_LASTMAIL:
+      return {
+        ...state,
+        lastMail: payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export default authReducer;
+EOF
+
+
+cat > src/store/auth/auth.selector.js <<EOF
+export const isLoggedSelector = (state) => state.authReducer.isLogged;
+export const uidSelector = (state) => state.authReducer.uid;
+export const emailSelector = (state) => state.authReducer.email;
+export const displayNameSelector = (state) => state.authReducer.displayName;
+export const photoURLSelector = (state) => state.authReducer.photoURL;
+export const permissionsSelector = (state) => state.authReducer.permissions;
+//
+export const registerSelector = (state) => state.authReducer.register;
+export const registerStepSelector = (state) => state.authReducer.step;
+export const registerLastMailSelector = (state) =>
+  state.authReducer.lastMail;
+EOF
+
+
+cat > src/store/auth/auth.type.js <<EOF
+export const TYPES = {
+  FIREBASE_AUTH_STATUS: "auth/FIREBASE_AUTH_STATUS",
+  FIREBASE_AUTH_UID: "auth/FIREBASE_AUTH_UID",
+  FIREBASE_AUTH_EMAIL: "auth/FIREBASE_AUTH_EMAIL",
+  FIREBASE_AUTH_DISPLAYNAME: "auth/FIREBASE_AUTH_DISPLAYNAME",
+  FIREBASE_AUTH_PHOTOURL: "auth/FIREBASE_AUTH_PHOTOURL",
+  FIREBASE_AUTH_PERMISSIONS: "auth/FIREBASE_AUTH_PERMISSIONS",
+  //
+  FIREBASE_AUTH_REGISTER_SUCCESS: "auth/FIREBASE_AUTH_REGISTER_SUCCESS",
+  FIREBASE_AUTH_REGISTER_STEP: "auth/FIREBASE_AUTH_REGISTER_STEP",
+  FIREBASE_AUTH_REGISTER_LASTMAIL: "auth/FIREBASE_AUTH_REGISTER_LASTMAIL",
+};
+EOF
+
+
+cat > src/store/auth/auth.type.js <<EOF
+export const TYPES = {
+  FIREBASE_AUTH_STATUS: "auth/FIREBASE_AUTH_STATUS",
+  FIREBASE_AUTH_UID: "auth/FIREBASE_AUTH_UID",
+  FIREBASE_AUTH_EMAIL: "auth/FIREBASE_AUTH_EMAIL",
+  FIREBASE_AUTH_DISPLAYNAME: "auth/FIREBASE_AUTH_DISPLAYNAME",
+  FIREBASE_AUTH_PHOTOURL: "auth/FIREBASE_AUTH_PHOTOURL",
+  FIREBASE_AUTH_PERMISSIONS: "auth/FIREBASE_AUTH_PERMISSIONS",
+  //
+  FIREBASE_AUTH_REGISTER_SUCCESS: "auth/FIREBASE_AUTH_REGISTER_SUCCESS",
+  FIREBASE_AUTH_REGISTER_STEP: "auth/FIREBASE_AUTH_REGISTER_STEP",
+  FIREBASE_AUTH_REGISTER_LASTMAIL: "auth/FIREBASE_AUTH_REGISTER_LASTMAIL",
+};
+EOF
+
+
+mkdir -p src/store/login
+
+cat > src/store/login/login.action.js <<EOF
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
+import { TYPES } from "./login.types";
+import { getApp } from "firebase/app";
+import { getFirebaseAuthErrorMessage } from "util/auth.util";
+
+const app = getApp();
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+provider.addScope("email");
+
+// -------------------------- LOGIN --------------------------
+export const firebaseLogin =
+  ({ login }, callback) =>
+  async (dispatch) => {
+    firebaseLoading(dispatch);
+    const email = login.email;
+    const password = login.password;
+
+    return loginWithAdmin({ email, password, dispatch, callback });
+  };
+
+// By Admin
+const loginWithAdmin = ({ email, password, dispatch, callback }) => {
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      if (callback) {
+        callback({
+          status: 200,
+          data: "Đăng nhập thành công",
+        });
+      }
+    })
+    .catch((error) => {
+      const errorMessage = getFirebaseAuthErrorMessage(error.code);
+      if (callback) {
+        callback({
+          status: 500,
+          data: errorMessage,
+        });
+      }
+    });
+};
+
+// tạo auth mới.
+export const createNewAccount =
+  ({ email, password }, callback) =>
+  (dispatch) => {
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        callback && callback({ status: 200 });
+      })
+      .catch((err) => {
+        console.log({ err });
+        const errorMessage = getFirebaseAuthErrorMessage(err.code);
+        callback && callback({ status: 500, data: errorMessage });
+      });
+  };
+
+// đăng nhập với google.
+export const firebaseLoginWithGoogle = (callback) => (dispatch) => {
+  return signInWithPopup(auth, provider)
+    .then((user) => {
+      if (user) {
+        console.log({ user });
+        callback && callback({ status: 200 });
+      }
+    })
+    .catch((err) => {
+      console.log({ err });
+      const errorMessage = getFirebaseAuthErrorMessage(err.code);
+      callback &&
+        callback({ status: 500, data: errorMessage || "Please try again!" });
+    });
+};
+
+// -------------------------- Logout --------------------------
+
+export const firebaseLogout = (callback) => (dispatch) => {
+  signOut(auth).then(() => {});
+  firebaseLogoutSuccess(dispatch);
+  if (callback) {
+    callback();
+  }
+};
+
+export const setLoadingSuccess = () => (dispatch) => {
+  firebaseLogoutSuccess(dispatch);
+};
+
+// -------------------------- Dispatch --------------------------
+
+const firebaseLoading = (dispatch) => {
+  dispatch({
+    type: TYPES.LOGIN_LOADING,
+  });
+};
+
+const firebaseLogoutSuccess = (dispatch) => {
+  dispatch({
+    type: TYPES.LOGOUT_SUCCESS,
+  });
+};
+EOF
+
+
+cat > src/store/login/login.reducer.js <<EOF
+import { TYPES } from "./login.types";
+
+const initState = {
+  error: "",
+  loading: false,
+};
+
+const loginReducer = (state = initState, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case TYPES.LOGIN_LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
+    case TYPES.LOGIN_SUCCESS:
+      return {
+        ...state,
+        error: "",
+        loading: false,
+      };
+    case TYPES.LOGIN_FAILED:
+      return {
+        ...state,
+        error: payload,
+        loading: false,
+      };
+    default:
+      return state;
+  }
+};
+
+export default loginReducer;
+EOF
+
+
+cat > src/store/login/login.types.js <<EOF
+export const TYPES = {
+  LOGIN_LOADING: "login/LOGIN_LOADING",
+  LOGIN_SUCCESS: "login/LOGIN_SUCCESS",
+  LOGIN_FAILED: "login/LOGIN_FAILED",
+  LOGOUT_SUCCESS: "login/LOGOUT_SUCCESS",
+};
+EOF
+
+cat > src/store/login/login.selector.js <<EOF
+export const loadingSelector = (state) => state.loginReducer.loading;
+EOF
+
+mkdir -p src/store/nav
+
+cat > src/store/nav/nav.action.js <<EOF
+import { TYPES } from "./nav.types";
+
+// -------------------------- Snapshot --------------------------
+export const toggleExpanse = () => (dispatch) => {
+  toggleExpanseSuccess(dispatch);
+};
+
+export const toggleCollapse = () => (dispatch) => {
+  toggleCollapseSuccess(dispatch);
+};
+
+export const setHighlight = (keys) => (dispatch) => {
+  setHightLightSuccess(dispatch, keys);
+};
+
+// -------------------------- Dispatch --------------------------
+const toggleExpanseSuccess = (dispatch) => {
+  dispatch({
+    type: TYPES.EXPANSE,
+  });
+};
+
+const toggleCollapseSuccess = (dispatch) => {
+  dispatch({
+    type: TYPES.COLLAPSE,
+  });
+};
+
+const setHightLightSuccess = (dispatch, data) => {
+  dispatch({
+    type: TYPES.HIGHTLIGHT,
+    payload: data,
+  });
+};
+EOF
+
+cat > src/store/nav/nav.reducer.js <<EOF
+import { TYPES } from "./nav.types";
+
+const initState = {
+  expansed: true,
+  collapsed: false,
+  hightlight: [],
+};
+
+const navReducer = (state = initState, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case TYPES.EXPANSE:
+      return {
+        ...state,
+        expansed: !state.expansed,
+      };
+    case TYPES.COLLAPSE:
+      return {
+        ...state,
+        error: payload,
+        collapsed: !state.collapsed,
+      };
+    case TYPES.HIGHTLIGHT:
+      return {
+        ...state,
+        hightlight: payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export default navReducer;
+EOF
+
+
+cat > src/store/nav/nav.selector.js <<EOF
+export const expanseSelector = (state) => state.navReducer.collapsed;
+export const collapseSelector = (state) => state.navReducer.collapsed;
+export const highlightSelector = (state) => state.navReducer.hightlight;
+EOF
+
+
+cat > src/store/nav/nav.types.js <<EOF
+export const TYPES = {
+  EXPANSE: "nav/EXPANSE",
+  COLLAPSE: "nav/COLLAPSE",
+  HIGHTLIGHT: "nav/HIGHTLIGHT",
+};
+EOF
+
+
+cat > jsconfig.json <<EOF
+{
+  "compilerOptions": {
+    "baseUrl": "src"
+  },
+  "include": ["src"]
+}
+EOF
+
+
+mkdir -p src/component/seo
+
+
+cat > src/component/seo/seo_helmet.js <<EOF
+import React from "react";
+import { Helmet } from "react-helmet";
+
+const SEOHelmet = ({
+  title = "Project",
+  description = "",
+  keywords = "",
+  author = "Robert Lee",
+  canonical,
+  ogImage,
+  ogType = "website",
+  twitterCard = "summary_large_image",
+  noIndex = false,
+  siteUrl = "",
+}) => {
+  // Tạo URL canonical nếu không được cung cấp
+  const canonicalUrl = canonical || `${siteUrl}${window.location.pathname}`;
+
+  // Tạo URL cho hình ảnh OG nếu không được cung cấp
+  const ogImageUrl = ogImage || `${siteUrl}/logo512.png`;
+
+  // Tạo thẻ meta robots
+  const robotsContent = noIndex ? "noindex, nofollow" : "index, follow";
+
+  return (
+    <Helmet>
+      {/* Meta tags cơ bản */}
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      {keywords && <meta name="keywords" content={keywords} />}
+      <meta name="author" content={author} />
+      <link rel="canonical" href={canonicalUrl} />
+
+      {/* Open Graph tags */}
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:image" content={ogImageUrl} />
+      <meta property="og:site_name" content="Thừa Phát Lại Support" />
+
+      {/* Twitter Card tags */}
+      <meta name="twitter:card" content={twitterCard} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={ogImageUrl} />
+
+      {/* Robots */}
+      <meta name="robots" content={robotsContent} />
+
+      {/* Thẻ bổ sung */}
+      <meta name="theme-color" content="#4285f4" />
+      <link rel="icon" type="image/x-icon" href={`${siteUrl}/favicon.ico`} />
+    </Helmet>
+  );
+};
+
+export default SEOHelmet;
+EOF
+
+
+
+ 
+echo "\e[32m--------------------------------------------------\e[0m"
+echo -e "\e[1;34mHOÀN TẤT CẤU HÌNH V2!\e[0m"
 echo "- Đã loại bỏ Lottie, thêm Firebase, Numeral, Lodash."
 echo "- Cấu trúc thư mục đã được tinh gọn lại."
-echo "- Store default đã setup sẵn Firestore và Redux Toolkit."
-echo "Vui lòng cd $PROJECT_NAME và chạy 'npm start'."
+echo -e "\e[36mStore default đã setup sẵn Firestore và Redux Toolkit.\e[0m"
+echo -e "\e[1;33mVui lòng cd $PROJECT_NAME và chạy 'npm start'.\e[0m"
+<END EDITING HERE>
 echo "--------------------------------------------------"
