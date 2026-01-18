@@ -885,10 +885,10 @@ import { LoadingScreen } from "../../component/loading";
 import { routePublict } from "./route/router_publict";
 import { routerPrivate } from "./route/router_private";
 import { useLogged } from "hook/useLogged";
-import TermOfService from "src/screen/99_Term/term_of_service";
-import DataPrivacy from "src/screen/98_Data_Privacy/data_privacy";
+import TermOfService from "screen/99_Term/term_of_service";
+import DataPrivacy from "screen/98_Data_Privacy/data_privacy";
 import { URL } from "./url";
-import HomeScreen from "src/screen/01_Home/home_screen";
+import HomeScreen from "screen/01_Home/home_screen";
 // redux
 
 const Router = () => {
@@ -921,8 +921,6 @@ EOF
 
 cat > src/screen/01_Home/home_screen.js <<EOF
 import React from "react";
-import TriggerInit from "./trigger/trigger_init";
-import Router from "./router";
 //
 //component
 //redux
@@ -946,6 +944,7 @@ const HomeScreen = () => {
   );
 };
 export default HomeScreen;
+
 EOF
 
 
