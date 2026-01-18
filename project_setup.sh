@@ -885,10 +885,10 @@ import { LoadingScreen } from "../../component/loading";
 import { routePublict } from "./route/router_publict";
 import { routerPrivate } from "./route/router_private";
 import { useLogged } from "hook/useLogged";
-import TermOfService from "screen/99_Term/term_of_service";
-import DataPrivacy from "screen/98_Data_Privacy/data_privacy";
+import TermOfService from "src/screen/99_Term/term_of_service";
+import DataPrivacy from "src/screen/98_Data_Privacy/data_privacy";
 import { URL } from "./url";
-import HomeScreen from "screen/01_Home/home_screen";
+import HomeScreen from "src/screen/01_Home/home_screen";
 // redux
 
 const Router = () => {
@@ -917,7 +917,35 @@ const Router = () => {
 };
 
 export default Router;
+EOF
 
+cat > src/screen/01_Home/home_screen.js <<EOF
+import React from "react";
+import TriggerInit from "./trigger/trigger_init";
+import Router from "./router";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const HomeScreen = () => {
+  // -------------------------- VAR -----------------------------
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return (
+    <>
+    </>
+  );
+};
+export default HomeScreen;
 EOF
 
 
@@ -1159,7 +1187,7 @@ EOF
 
  
 
-cat > screen/99_Term/term_of_service.js <<EOF
+cat > src/screen/99_Term/term_of_service.js <<EOF
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 //
@@ -1185,7 +1213,7 @@ export default TermOfService;
 EOF
 
 
-cat > screen/98_Data_Privacy/data_privacy.js <<EOF
+cat > src/screen/98_Data_Privacy/data_privacy.js <<EOF
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 //
@@ -1212,7 +1240,7 @@ EOF
 
 
 
-cat > src/screen/100_Dev/dev <<EOF
+cat > src/screen/100_Dev/dev.js <<EOF
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 //
@@ -2290,10 +2318,10 @@ const SEOHelmet = ({
   siteUrl = "",
 }) => {
   // Tạo URL canonical nếu không được cung cấp
-  const canonicalUrl = canonical || ``;
+  const canonicalUrl = canonical || "";
 
   // Tạo URL cho hình ảnh OG nếu không được cung cấp
-  const ogImageUrl = ogImage || ``;
+  const ogImageUrl = ogImage || "";
 
   // Tạo thẻ meta robots
   const robotsContent = noIndex ? "noindex, nofollow" : "index, follow";
