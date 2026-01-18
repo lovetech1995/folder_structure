@@ -36,7 +36,8 @@ echo "Đang cài đặt thư viện..."
 npm install @reduxjs/toolkit react-redux antd axios moment react-router-dom react-icons firebase numeral lodash react-countdown react-helmet
 
 # Tailwind
-npm install -D tailwindcss@3 postcss autoprefixer
+npm install -D tailwindcss@3 postcss autoprefixer 
+npm i prettier-plugin-tailwindcss --legacy-peer-deps
 npx tailwindcss init -p
 
 
@@ -331,13 +332,19 @@ EOF
 # src/store/root.reducer.js
 cat > src/store/root.reducer.js <<EOF
 import { combineReducers } from "@reduxjs/toolkit";
-import defaultReducer from "./default/default.reducer";
+import authReducer from "./auth/auth.reducer";
+import loginReducer from "./login/login.reducer";
+import navReducer from "./nav/nav.reducer";
 
 const rootReducer = combineReducers({
-  default: defaultReducer,
+authReducer,
+loginReducer,
+navReducer,
 });
 
 export default rootReducer;
+
+
 EOF
 
  
@@ -1666,7 +1673,7 @@ import { REGION } from "store/ref";
 import { getApp } from "firebase/app";
 
 const app = getApp();
-const functions = getFunctions(undefined,REGION);
+const functions = getFunctions(app,REGION);
 
 // get functions api.
 export const getApiFunctions = () => {
@@ -1716,9 +1723,8 @@ import { TYPES } from "./auth.type";
 import { SOURCE } from "config/config";
 import { getApiFunctions } from "../api";
 import { getApp } from "firebase/app";
-import { PROJECT_ID } from "config/config";
 
-const app = getApp(PROJECT_ID);
+const app = getApp();
 const auth = getAuth(app);
 
 // -------------------------- Snapshot --------------------------
