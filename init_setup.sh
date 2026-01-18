@@ -24,13 +24,23 @@ read -p "Bạn có muốn cài đặt gemini.md vào thư mục agent/ không? (
 case "$choice" in 
   y|Y ) 
     echo "Đang khởi tạo thư mục agent và tải GEMINI.md..."
+
+    # Hỏi người dùng nhập tên
+    read -p "Vui lòng nhập tên dự án: " PROJECT_NAME
+
+    # Kiểm tra nếu người dùng bỏ trống
+    if [ -z "$PROJECT_NAME" ]; then
+      echo "Lỗi: Tên dự án không được để trống."
+      exit 1
+    fi
+
     
     # Tạo thư mục agent nếu chưa có
-    mkdir -p agent
+    mkdir -p $PROJECT_NAME/agent
     
     # Tải file từ GitHub và lưu vào agent/GEMINI.md
     # Lưu ý: Tôi dùng option -o để đổi tên từ .GEMINI.md thành GEMINI.md cho dễ nhìn
-    curl -sSL https://raw.githubusercontent.com/lovetech1995/folder_structure/refs/heads/main/agent/.GEMINI.md -o agent/GEMINI.md
+    curl -sSL https://raw.githubusercontent.com/lovetech1995/folder_structure/refs/heads/main/agent/.GEMINI.md -o $PROJECT_NAME/agent/GEMINI.md
     
     if [ $? -eq 0 ]; then
         echo "Tải thành công! File lưu tại: agent/GEMINI.md"
