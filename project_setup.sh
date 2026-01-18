@@ -36,8 +36,9 @@ echo "Đang cài đặt thư viện..."
 npm install @reduxjs/toolkit react-redux antd axios moment react-router-dom react-icons firebase numeral lodash react-countdown react-helmet
 
 # Tailwind
-npm install -D tailwindcss postcss autoprefixer
+npm install -D tailwindcss@3 postcss autoprefixer
 npx tailwindcss init -p
+
 
 
 # cài firebase
@@ -1156,32 +1157,9 @@ export default LoginScreen;
 EOF
 
 
-cat > screen/99_Term/term_of_service <<EOF
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-//
-//component
-//redux
-//selector
-//actions
-//utils
-//hook
-//str
-const LoginScreen = () => {
-  // -------------------------- VAR -----------------------------
-  // -------------------------- STATE ---------------------------
-  // -------------------------- REDUX ---------------------------
-  // -------------------------- FUNCTION ------------------------
-  // -------------------------- EFFECT --------------------------
-  // -------------------------- DATA FUNCTION -------------------
-  // -------------------------- RENDER --------------------------
-  // -------------------------- MAIN ----------------------------
-  return <></>;
-};
-export default LoginScreen;
-EOF
+ 
 
-cat > screen/99_Term/term_of_service <<EOF
+cat > screen/99_Term/term_of_service.js <<EOF
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 //
@@ -1207,7 +1185,7 @@ export default TermOfService;
 EOF
 
 
-cat > screen/98_Data_Privacy/data_privacy <<EOF
+cat > screen/98_Data_Privacy/data_privacy.js <<EOF
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 //
@@ -1513,7 +1491,6 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import { Layout, Drawer, Button } from "antd";
 import { useSelector } from "react-redux";
-import "./style.css";
 // component
 import LayoutMenu from "./layout_menu";
 import LayoutFooter from "./layout_footer";
@@ -1605,109 +1582,7 @@ const LayoutRoot = () => {
 
 export default LayoutRoot;
 EOF
-
-
-cat > src/screen/00_Nav/layout/style.css <<EOF
-.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-  background-color: #f0f2f5;
-}
-
-.ant-layout {
-  background: linear-gradient(#ffffff, #f5f5f5 28%);
-}
-
-.ant-layout .ant-layout-sider {
-  background-color: transparent;
-}
-.ant-layout-sider .logo {
-  width: auto;
-  max-width: 100px;
-  max-height: 100px;
-  margin: 4px;
-  margin: auto;
-  background-color: transparent;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.ant-layout-sider .logo img {
-  height: 100%;
-}
-.ant-layout .ant-layout-header {
-  padding-left: 15px;
-  padding-right: 15px;
-  /* box-shadow: rgb(0 0 0 / 20%) 0px 2px 4px -1px,
-    rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px; */
-  background-color: transparent;
-  color: black;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(205, 205, 205, 0.3);
-}
-.ant-layout .ant-layout-header .trigger {
-  background-color: #3e65af;
-  border-width: 0px;
-  color: rgb(255, 255, 255);
-}
-.header-left {
-  flex-direction: row;
-  justify-content: flex-start;
-  display: flex;
-}
-
-.header-right {
-  flex-direction: row;
-  justify-content: flex-end;
-  display: flex;
-}
-
-.header-left .header-title {
-  font-size: 18px;
-  font-weight: "bold";
-  display: flex;
-  align-items: center;
-}
-
-.ant-menu-vertical .ant-menu-submenu-selected {
-  background-color: #f0f2f5;
-}
-
-.ant-layout-header .ant-col {
-  justify-content: center;
-  flex-direction: column;
-  display: flex;
-}
-.ant-layout-header .ant-col button {
-  background-color: transparent;
-}
-
-.ant-layout-sider-children {
-  border-right: 1px solid rgba(205, 205, 205, 0.3);
-}
-
-.header-title {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.justify-center {
-  display: flex;
-  align-items: center;
-}
-
-.drawer-layout .ant-drawer-body {
-  padding: 10px;
-}
-
-.header-menu {
-  background-color: #fff !important;
-}
-
-.step-kyc .ant-steps-item-container {
-  /* max-width: 250px; */
-}
-EOF
-
+ 
 
 cat > src/utils/auth.util.js <<EOF
 const FIREBASE_AUTH_ERROR = {
@@ -2415,10 +2290,10 @@ const SEOHelmet = ({
   siteUrl = "",
 }) => {
   // Tạo URL canonical nếu không được cung cấp
-  const canonicalUrl = canonical || `${siteUrl}${window.location.pathname}`;
+  const canonicalUrl = canonical || ``;
 
   // Tạo URL cho hình ảnh OG nếu không được cung cấp
-  const ogImageUrl = ogImage || `${siteUrl}/logo512.png`;
+  const ogImageUrl = ogImage || ``;
 
   // Tạo thẻ meta robots
   const robotsContent = noIndex ? "noindex, nofollow" : "index, follow";
@@ -2451,7 +2326,6 @@ const SEOHelmet = ({
 
       {/* Thẻ bổ sung */}
       <meta name="theme-color" content="#4285f4" />
-      <link rel="icon" type="image/x-icon" href={`${siteUrl}/favicon.ico`} />
     </Helmet>
   );
 };
@@ -2473,9 +2347,10 @@ EOF
 cat > tailwind.config.js <<EOF
   /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["src/screen/01_Home/home_screen.js", "./src/**/*.{html,js}"],
+  content: ["./src/**/*.{html,js}"],
   plugins: [],
 };
+
 EOF
  
 
@@ -2510,6 +2385,35 @@ export const useClaimToken = () => {
   // -------------------------- MAIN ----------------------------
   return { permissions };
 };
+EOF
+
+cat > .gitignore <<EOF
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+#agent
+.agent
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 EOF
 
  

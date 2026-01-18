@@ -30,11 +30,11 @@ case "$choice" in
     echo "Đang khởi tạo thư mục agent và tải GEMINI.md..."
     
     # Tạo thư mục agent nếu chưa có
-    mkdir -p $PROJECT_NAME/agent
+    mkdir -p $PROJECT_NAME/.agent
     
     # Tải file từ GitHub và lưu vào agent/GEMINI.md
     # Lưu ý: Tôi dùng option -o để đổi tên từ .GEMINI.md thành GEMINI.md cho dễ nhìn
-    curl -sSL https://raw.githubusercontent.com/lovetech1995/folder_structure/refs/heads/main/agent/.GEMINI.md -o $PROJECT_NAME/agent/GEMINI.md
+    curl -sSL https://raw.githubusercontent.com/lovetech1995/folder_structure/refs/heads/main/agent/.GEMINI.md -o $PROJECT_NAME/.agent/GEMINI.md
     
     if [ $? -eq 0 ]; then
         echo "Tải thành công! File lưu tại: agent/GEMINI.md"
