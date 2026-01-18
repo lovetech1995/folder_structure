@@ -2515,9 +2515,8 @@ EOF
  
 echo "\e[32m--------------------------------------------------\e[0m"
 echo -e "\e[1;34mHOÀN TẤT CẤU HÌNH V2!\e[0m"
-echo "- Đã loại bỏ Lottie, thêm Firebase, Numeral, Lodash."
 echo "- Cấu trúc thư mục đã được tinh gọn lại."
 echo -e "\e[36mStore default đã setup sẵn Firestore và Redux Toolkit.\e[0m"
-echo -e "\e[1;33mVui lòng cd $PROJECT_NAME và chạy 'npm start'.\e[0m"
+code .
 <END EDITING HERE>
 echo "--------------------------------------------------"
