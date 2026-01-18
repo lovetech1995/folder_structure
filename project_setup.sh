@@ -1,16 +1,18 @@
 #!/bin/bash
 
-# Thay vì kiểm tra $1, ta chủ động hỏi người dùng
-echo "--- Khởi tạo dự án ---"
-read -p "Nhập tên dự án của bạn: " PROJECT_NAME
-
-# Kiểm tra nếu người dùng vẫn không chịu gõ gì mà nhấn Enter luôn
-if [ -z "$PROJECT_NAME" ]; then
-  echo "Lỗi: Bạn chưa nhập gì cả, tên dự án không được để trống!"
-  exit 1
+# 1. Kiểm tra xem người dùng có nhập tham số hay không
+if [ -z "$1" ]; then
+  echo "------------------------------------------------"
+  echo "LỖI: Bạn chưa nhập tên dự án!"
+  echo "Cách dùng đúng: bash $0 <ten-du-an>"
+  echo "Ví dụ: bash $0 my-new-app"
+  echo "------------------------------------------------"
+  exit 1 # Dừng script ngay tại đây nếu không có input
 fi
 
-echo "Đang cấu hình cho dự án: $PROJECT_NAME"
+# 2. Gán tham số vào biến
+PROJECT_NAME=$1
+
 
 echo "--------------------------------------------------"
 echo "Bắt đầu tạo dự án React: $PROJECT_NAME"

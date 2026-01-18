@@ -1,12 +1,15 @@
 #!/bin/bash
 
+PROJECT_NAME="my_assistance"
+
 # --- PHẦN 1: Chạy script setup project ---
 echo "------------------------------------------------"
 echo "Bắt đầu chạy script setup project..."
 echo "------------------------------------------------"
 
 # Tải và thực thi script project_setup.sh từ GitHub
-curl -sSL https://raw.githubusercontent.com/lovetech1995/folder_structure/refs/heads/main/project_setup.sh | bash
+curl -sSL https://raw.githubusercontent.com/lovetech1995/folder_structure/refs/heads/main/project_setup.sh | bash -s -- "$PROJECT_NAME"
+
 
 # Kiểm tra xem script trước đó có chạy thành công không
 if [ $? -eq 0 ]; then
@@ -24,16 +27,6 @@ read -p "Bạn có muốn cài đặt gemini.md vào thư mục agent/ không? (
 case "$choice" in 
   y|Y ) 
     echo "Đang khởi tạo thư mục agent và tải GEMINI.md..."
-
-    # Hỏi người dùng nhập tên
-    read -p "Vui lòng nhập tên dự án: " PROJECT_NAME
-
-    # Kiểm tra nếu người dùng bỏ trống
-    if [ -z "$PROJECT_NAME" ]; then
-      echo "Lỗi: Tên dự án không được để trống."
-      exit 1
-    fi
-
     
     # Tạo thư mục agent nếu chưa có
     mkdir -p $PROJECT_NAME/agent
