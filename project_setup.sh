@@ -2417,10 +2417,8 @@ yarn-error.log*
 EOF
 
  
-echo "\e[32m--------------------------------------------------\e[0m"
-echo -e "\e[1;34mHOÀN TẤT CẤU HÌNH V2!\e[0m"
+echo "--------------------------------------------------"
+echo -e "\e[HOÀN TẤT CẤU HÌNH V2]"
 echo "- Cấu trúc thư mục đã được tinh gọn lại."
-echo -e "\e[36mStore default đã setup sẵn Firestore và Redux Toolkit.\e[0m"
-code .
-<END EDITING HERE>
+echo -e "Store default đã setup sẵn Firestore và Redux Toolkit."
 echo "--------------------------------------------------"
