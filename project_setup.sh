@@ -33,11 +33,15 @@ cd $PROJECT_NAME
 # - Cập nhật: Bỏ lottie-react
 # - Thêm: firebase, numeral, lodash, react-countdown
 echo "Đang cài đặt thư viện..."
-npm install @reduxjs/toolkit react-redux antd axios moment react-router-dom react-icons firebase numeral lodash react-countdown
+npm install @reduxjs/toolkit react-redux antd axios moment react-router-dom react-icons firebase numeral lodash react-countdown react-helmet
 
 # Tailwind
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
+
+
+# cài firebase
+npm install firebase
 
 echo "Đã cài đặt xong thư viện."
 
@@ -146,9 +150,9 @@ EOF
 cat > src/config/config.js <<EOF
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-// import { getAuth } from "firebase/auth";
+ 
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
   projectId: "YOUR_PROJECT_ID",
@@ -157,11 +161,15 @@ const firebaseConfig = {
   appId: "YOUR_APP_ID"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// recapcha
+export const BRAND_NAME = ""; // Brand Name
+export const PROJECT_ID = "$PROJECT_NAME";
+export const SOURCE = "client";
+export const app = initializeApp(firebaseConfig, PROJECT_ID);
+export const reCAPTCHA = "";
+export const MEDIA_STORAGE =
+  "https://storage.googleapis.com/" + firebaseConfig.storageBucket + "/";
 
-
-export default app;
 EOF
 
 # 5. Setup Store Structure
@@ -1072,11 +1080,10 @@ import { Route } from "react-router-dom";
 import { URL } from "../url";
 // component
 import LayoutRoot from "../layout/layout_root";
-import PrivateRoute from "../component/private_route";
 //
 //concept
 
-const PERMISSION_SCREEN = "bailiff";
+const PERMISSION_SCREEN = "";
 
 export const routerPrivate = () => {
   // -------------------------- STATE --------------------------
@@ -1121,6 +1128,137 @@ export const routePublict = () => {
 EOF
 
 
+mkdir -p src/screen/01_Login
+
+cat > src/screen/01_Login/login.js <<EOF
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const LoginScreen = () => {
+  // -------------------------- VAR -----------------------------
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return <></>;
+};
+export default LoginScreen;
+EOF
+
+
+cat > screen/99_Term/term_of_service <<EOF
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const LoginScreen = () => {
+  // -------------------------- VAR -----------------------------
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return <></>;
+};
+export default LoginScreen;
+EOF
+
+cat > screen/99_Term/term_of_service <<EOF
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const TermOfService = () => {
+  // -------------------------- VAR -----------------------------
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return <></>;
+};
+export default TermOfService;
+EOF
+
+
+cat > screen/98_Data_Privacy/data_privacy <<EOF
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const DataPrivacy = () => {
+  // -------------------------- VAR -----------------------------
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return <></>;
+};
+export default DataPrivacy;
+EOF
+
+
+
+cat > src/screen/100_Dev/dev <<EOF
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const DevScreen = () => {
+  // -------------------------- VAR -----------------------------
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return <></>;
+};
+export default DevScreen;
+EOF
+
 
 cat > src/screen/00_Nav/layout/layout_banned.js <<EOF
 import React from "react";
@@ -1128,7 +1266,7 @@ import { Layout, Empty, Button, Row, Col } from "antd";
 import { FiPower } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 // redux
-import { logOut } from "store/user/auth/auth.action";
+import { logOut } from "store/auth/auth.action";
 
 const { Content } = Layout;
 const BannedScreen = () => {
@@ -1344,7 +1482,7 @@ import React from "react";
 import { Menu } from "antd";
 import { useSelector } from "react-redux";
 import { useMenu } from "../../../hook/useMenu";
-import { highlightSelector } from "../../../store/bailiff/nav/nav.selector";
+import { highlightSelector } from "../../../store/nav/nav.selector";
 
 const LayoutMenu = (props) => {
   // -------------------------- VAR --------------------------
@@ -1376,17 +1514,16 @@ import { Outlet } from "react-router-dom";
 import { Layout, Drawer, Button } from "antd";
 import { useSelector } from "react-redux";
 import "./style.css";
-// import logo from "../../../config/img/logo.png";
 // component
 import LayoutMenu from "./layout_menu";
 import LayoutFooter from "./layout_footer";
 
 // redux
-import { collapseSelector } from "../../../store/bailiff/nav/nav.selector";
+import { collapseSelector } from "../../../store/nav/nav.selector";
 import { useDispatch } from "react-redux";
-import { toggleCollapse } from "store/bailiff/nav/nav.action";
+import { toggleCollapse } from "store/nav/nav.action";
 import { LogoutOutlined } from "@ant-design/icons";
-import { logOut } from "store/user/auth/auth.action";
+import { logOut } from "store/auth/auth.action";
 import SEOHelmet from "component/seo/seo_helmet";
 
 const LayoutRoot = () => {
@@ -1674,44 +1811,33 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { TYPES } from "./auth.type";
-import { DATABASE_URL, SOURCE } from "config/config";
-import {
-  getDatabase,
-  ref,
-  set,
-  onDisconnect,
-  serverTimestamp,
-} from "firebase/database";
+import { SOURCE } from "config/config";
 import { getApiFunctions } from "../api";
 import { getApp } from "firebase/app";
 import { PROJECT_ID } from "config/config";
- 
 
 const app = getApp(PROJECT_ID);
 const auth = getAuth(app);
- 
 
 // -------------------------- Snapshot --------------------------
 const authSub = [];
-export const snapUserAuth = () => (dispatch) => {
+export const snapAuth = () => (dispatch) => {
   const unSub = onAuthStateChanged(auth, async (user) => {
     const uid = user?.uid;
     const isLogged = uid ? true : false;
     const reloadUserInfo = user?.reloadUserInfo;
     const email = user?.email;
-    const displayName = user?.displayName;
     const permissions = reloadUserInfo?.customAttributes;
 
     firebasePermissionSuccess(dispatch, permissions);
     firebaseEmailSuccess(dispatch, email);
     firebaseAuthSuccess(dispatch, isLogged);
     firebaseUidSuccess(dispatch, uid);
-   
   });
   authSub.push(unSub);
 };
- 
-export const unSnapUserAuth = () => (dispatch) => {
+
+export const unSnapAuth = () => (dispatch) => {
   authSub.forEach((subscriber) => {
     subscriber();
   });
@@ -1872,19 +1998,6 @@ const firebaseEmailSuccess = (dispatch, data) => {
   });
 };
 
-const firebaseDisplayNameSuccess = (dispatch, data) => {
-  dispatch({
-    type: TYPES.FIREBASE_AUTH_DISPLAYNAME,
-    payload: data,
-  });
-};
-
-const firebasePhotoURLSuccess = (dispatch, data) => {
-  dispatch({
-    type: TYPES.FIREBASE_AUTH_PHOTOURL,
-    payload: data,
-  });
-};
 EOF
 
 
@@ -2347,6 +2460,57 @@ export default SEOHelmet;
 EOF
 
 
+cat > postcss.config.js <<EOF
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+EOF
+
+
+cat > tailwind.config.js <<EOF
+  /** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["src/screen/01_Home/home_screen.js", "./src/**/*.{html,js}"],
+  plugins: [],
+};
+EOF
+ 
+
+cat > .prettierrc <<EOF
+{
+  "plugins": ["prettier-plugin-tailwindcss"]
+}
+EOF
+
+cat > src/hook/useToken.js <<EOF
+import { useSelector } from "react-redux";
+import { permissionsSelector } from "store/auth/auth.selector";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+export const useClaimToken = () => {
+  // -------------------------- VAR -----------------------------
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  const claim = useSelector(permissionsSelector);
+  const permissions = claim ? JSON.parse(claim)?.clients : [];
+
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return { permissions };
+};
+EOF
 
  
 echo "\e[32m--------------------------------------------------\e[0m"
