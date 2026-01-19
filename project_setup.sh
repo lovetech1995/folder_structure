@@ -37,7 +37,7 @@ npm install @reduxjs/toolkit react-redux antd axios moment react-router-dom reac
 
 # Tailwind
 npm install -D tailwindcss@3 postcss autoprefixer 
-npm i prettier-plugin-tailwindcss --legacy-peer-deps
+npm i prettier-plugin-tailwindcss prettier --legacy-peer-deps
 npx tailwindcss init -p
 
 
@@ -167,6 +167,7 @@ export const firebaseConfig = {
 export const BRAND_NAME = ""; // Brand Name
 export const PROJECT_ID = "$PROJECT_NAME";
 export const SOURCE = "client";
+export const REGION = "asia-southeast1";
 export const app = initializeApp(firebaseConfig, PROJECT_ID);
 export const reCAPTCHA = "";
 export const MEDIA_STORAGE =
@@ -1669,7 +1670,7 @@ EOF
 
 cat > src/store/api.js <<EOF
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { REGION } from "store/ref";
+import { REGION } from "config/config";
 import { getApp } from "firebase/app";
 
 const app = getApp();
@@ -2448,6 +2449,137 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 EOF
+
+
+cat > src/hook/default/useActionDefault.js <<EOF
+import { message } from "antd";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { cloudUpdateInfo } from "store/user/user/user.action";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+// =================== TẤT CẢ CÁC MẪU NÀY CHỈ LÀ MÔ PHỎNG ====================// 
+
+const useActionDefault = () => {
+  // -------------------------- VAR -----------------------------
+  const [_, setSearchParams] = useSearchParams();
+  // -------------------------- STATE ---------------------------
+  const [loading, setLoading] = useState(false);
+  // -------------------------- REDUX ---------------------------
+  const dispatch = useDispatch();
+  // -------------------------- FUNCTION ------------------------
+  const handleOpen = () => {
+    setSearchParams({ viewOpenAccount: true });
+  };
+
+  const handleClose = (form) => {
+    setSearchParams({});
+    form?.resetFields();
+  };
+
+  const handleUpdateAccountInfo = (form) => {
+    form
+      ?.validateFields()
+      .then((values) => {
+        if (!values) return message.error("Không tìm thấy kết quả submit");
+        console.log({ values });
+        const { displayName, base64 } = values;
+        if (!displayName) return message.error("Không được để trống họ tên!");
+        setLoading(true);
+        dispatch(
+          cloudUpdateInfo({ displayName, base64 }, (res) => {
+            setLoading(false);
+            if (res?.status === 200) {
+              message.success("Đã cập nhật thành công");
+              handleClose();
+            }
+            if (res?.status === 500) {
+              message.error(res?.data);
+            }
+          }),
+        );
+      })
+      .catch((err) => {
+        console.log({ err });
+      });
+  };
+
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return { handleOpen, handleClose, handleUpdateAccountInfo, loading };
+};
+export default useActionDefault;
+
+// =================== TẤT CẢ CÁC MẪU NÀY CHỈ LÀ MÔ PHỎNG ====================// 
+EOF
+
+cat > src/hook/default/useFlowDefault.js <<EOF
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { bailiffJobDetailSelector } from "store/bailiff/bailiff/job/bailiff_job.selector";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+export const FLOWS = {
+  DEPOSIT: "waiting",
+  //
+  TRANSCRIPT: "transcript",
+  SUPPORT: "support",
+  //
+  APPROVAL: "approval",
+};
+
+// =================== TẤT CẢ CÁC MẪU NÀY CHỈ LÀ MÔ PHỎNG ====================// 
+
+export const useJobDetailFlow = () => {
+  // -------------------------- VAR -----------------------------
+  // -------------------------- STATE ---------------------------
+  const [flow, setFlow] = useState(FLOWS.DEPOSIT);
+  // -------------------------- REDUX ---------------------------
+  const detail = useSelector(bailiffJobDetailSelector);
+  const status = detail?.status || "waiting";
+
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  useEffect(() => {
+    if (status === "waiting" || status === "waiting for deposit") {
+      setFlow(FLOWS.DEPOSIT);
+    }
+    if (status === "transcripting") {
+      setFlow(FLOWS.TRANSCRIPT);
+    }
+    if (status === "support") {
+      setFlow(FLOWS.SUPPORT);
+    }
+    if (status === "approval") {
+      setFlow(FLOWS.APPROVAL);
+    }
+  }, [status]);
+  // -------------------------- MAIN ----------------------------
+  return { flow };
+};
+
+
+// =================== TẤT CẢ CÁC MẪU NÀY CHỈ LÀ MÔ PHỎNG ====================// 
+EOF
+
+
 
  
 echo "--------------------------------------------------"
