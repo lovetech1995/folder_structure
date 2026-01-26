@@ -91,6 +91,521 @@ echo "Đã tạo xong thư mục."
 # 4. Setup Config & Tailwind
 echo "Đang cấu hình Tailwind và Config..."
 
+
+# Tailwind config
+cat > src/utils/them.js <<EOF
+// THEME CONFIGURATION
+// Atlassian Design System inspired theme
+
+// -------------------------- DESIGN TOKENS --------------------------
+
+// Color Palette - Based on Atlassian Design System
+const colors = {
+  // Primary Colors
+  primary: "#0052CC", // Bold blue for primary actions
+  primaryHover: "#0065FF",
+  primaryActive: "#0747A6",
+  
+  // Status Colors (for task states)
+  success: "#00875A", // Green for "Done" state
+  successHover: "#00A572",
+  successLight: "#E3FCEF",
+  
+  warning: "#FFAB00", // Yellow for "In Progress" state  
+  warningHover: "#FFC400",
+  warningLight: "#FFF0B3",
+  
+  info: "#0065FF", // Blue for "To Do" state
+  infoHover: "#2684FF",
+  infoLight: "#DEEBFF",
+  
+  error: "#DE350B", // Red for errors and destructive actions
+  errorHover: "#FF5630",
+  errorLight: "#FFEBE6",
+  
+  // Neutral Colors
+  neutral900: "#091E42", // Dark text (headings)
+  neutral800: "#172B4D", // Body text
+  neutral700: "#253858",
+  neutral600: "#344563",
+  neutral500: "#505F79", // Secondary text
+  neutral400: "#5E6C84",
+  neutral300: "#6B778C",
+  neutral200: "#7A869A",
+  neutral100: "#8993A4",
+  neutral90: "#97A0AF",
+  neutral80: "#A5ADBA",
+  neutral70: "#B3BAC5",
+  neutral60: "#C1C7D0",
+  neutral50: "#DFE1E6", // Borders
+  neutral40: "#EBECF0",
+  neutral30: "#F4F5F7", // Backgrounds
+  neutral20: "#FAFBFC",
+  neutral10: "#FFFFFF",
+  
+  // Background Colors
+  background: "#FAFBFC",
+  backgroundCard: "#FFFFFF",
+  backgroundHover: "#F4F5F7",
+  backgroundActive: "#EBECF0",
+};
+
+// Typography
+const typography = {
+  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+  fontSizeBase: 14,
+  fontSizes: {
+    h1: 35,
+    h2: 29,
+    h3: 24,
+    h4: 20,
+    h5: 16,
+    base: 14,
+    small: 12,
+    tiny: 11,
+  },
+  fontWeights: {
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+  },
+  lineHeights: {
+    tight: 1.2,
+    base: 1.4286, // 20px for 14px font
+    relaxed: 1.5,
+  },
+};
+
+// Spacing (4px grid system)
+const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  base: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 40,
+  xxxl: 48,
+};
+
+// Border Radius
+const borderRadius = {
+  subtle: 3,
+  base: 4,
+  round: 50,
+};
+
+// Shadows
+const shadows = {
+  card: "0 1px 1px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31)",
+  cardHover: "0 4px 8px -2px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31)",
+  modal: "0 0 0 1px rgba(9, 30, 66, 0.08), 0 2px 4px 1px rgba(9, 30, 66, 0.08)",
+  dropdown: "0 4px 8px -2px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31)",
+};
+
+// -------------------------- THEME ADMIN (Original) --------------------------
+
+const theme1 = {
+  components: {
+    Menu: {
+      itemBg: "rgba(255,255,255,0)",
+      itemSelectedBg: "transparent",
+      itemSelectedColor: "rgb(0,0,0)",
+      subMenuItemBg: "rgba(0,0,0,0)",
+      colorText: "rgba(0,0,0,0.65)",
+      colorSplit: "rgba(5,5,5,0)",
+      itemColor: "rgba(0,0,0,0.47)",
+    },
+  },
+};
+
+// -------------------------- ATLASSIAN THEME --------------------------
+
+const atlassianTheme = {
+  token: {
+    // Colors
+    colorPrimary: colors.primary,
+    colorSuccess: colors.success,
+    colorWarning: colors.warning,
+    colorError: colors.error,
+    colorInfo: colors.info,
+    
+    // Typography
+    fontFamily: typography.fontFamily,
+    fontSize: typography.fontSizeBase,
+    fontSizeHeading1: typography.fontSizes.h1,
+    fontSizeHeading2: typography.fontSizes.h2,
+    fontSizeHeading3: typography.fontSizes.h3,
+    fontSizeHeading4: typography.fontSizes.h4,
+    fontSizeHeading5: typography.fontSizes.h5,
+    fontSizeSM: typography.fontSizes.small,
+    
+    // Border Radius
+    borderRadius: borderRadius.base,
+    borderRadiusSM: borderRadius.subtle,
+    borderRadiusLG: borderRadius.base,
+    
+    // Spacing
+    padding: spacing.base,
+    paddingSM: spacing.sm,
+    paddingLG: spacing.lg,
+    paddingXS: spacing.xs,
+    margin: spacing.base,
+    marginSM: spacing.sm,
+    marginLG: spacing.lg,
+    marginXS: spacing.xs,
+    
+    // Text Colors
+    colorText: colors.neutral800,
+    colorTextSecondary: colors.neutral500,
+    colorTextTertiary: colors.neutral400,
+    colorTextQuaternary: colors.neutral300,
+    
+    // Background Colors
+    colorBgContainer: colors.backgroundCard,
+    colorBgElevated: colors.neutral10,
+    colorBgLayout: colors.background,
+    colorBgSpotlight: colors.backgroundHover,
+    
+    // Border Colors
+    colorBorder: colors.neutral50,
+    colorBorderSecondary: colors.neutral40,
+    
+    // Shadows
+    boxShadow: shadows.card,
+    boxShadowSecondary: shadows.dropdown,
+    
+    // Line Heights
+    lineHeight: typography.lineHeights.base,
+    lineHeightHeading1: typography.lineHeights.tight,
+    lineHeightHeading2: typography.lineHeights.tight,
+    lineHeightHeading3: typography.lineHeights.tight,
+    lineHeightHeading4: typography.lineHeights.tight,
+    lineHeightHeading5: typography.lineHeights.tight,
+  },
+  
+  components: {
+    // Button
+    Button: {
+      primaryShadow: "none",
+      controlHeight: 32,
+      controlHeightLG: 40,
+      controlHeightSM: 24,
+      fontWeight: typography.fontWeights.medium,
+      borderRadius: borderRadius.subtle,
+      paddingContentHorizontal: spacing.md,
+    },
+    
+    // Input
+    Input: {
+      controlHeight: 32,
+      controlHeightLG: 40,
+      controlHeightSM: 24,
+      borderRadius: borderRadius.subtle,
+      paddingBlock: 6,
+      paddingInline: spacing.sm,
+      hoverBorderColor: colors.neutral300,
+      activeBorderColor: colors.primary,
+      activeShadow: "0 0 0 2px #DEEBFF",
+    },
+    
+    // Select
+    Select: {
+      controlHeight: 32,
+      controlHeightLG: 40,
+      controlHeightSM: 24,
+      borderRadius: borderRadius.subtle,
+      optionPadding: 4px 8px,
+    },
+    
+    // Card
+    Card: {
+      borderRadiusLG: borderRadius.base,
+      boxShadow: shadows.card,
+      boxShadowHover: shadows.cardHover,
+      paddingLG: spacing.base,
+    },
+    
+    // Modal
+    Modal: {
+      borderRadiusLG: borderRadius.base,
+      boxShadow: shadows.modal,
+      headerBg: colors.backgroundCard,
+      contentBg: colors.backgroundCard,
+      paddingContentHorizontalLG: spacing.lg,
+    },
+    
+    // Table
+    Table: {
+      borderRadius: borderRadius.base,
+      headerBg: colors.backgroundHover,
+      headerColor: colors.neutral800,
+      rowHoverBg: colors.backgroundHover,
+      borderColor: colors.neutral50,
+      cellPaddingBlock: spacing.md,
+      cellPaddingInline: spacing.base,
+    },
+    
+    // Menu
+    Menu: {
+      itemBg: "transparent",
+      itemSelectedBg: colors.backgroundActive,
+      itemSelectedColor: colors.primary,
+      itemHoverBg: colors.backgroundHover,
+      itemColor: colors.neutral800,
+      itemBorderRadius: borderRadius.subtle,
+      itemPaddingInline: spacing.md,
+      itemMarginBlock: 2,
+      iconSize: 16,
+    },
+    
+    // Tabs
+    Tabs: {
+      itemColor: colors.neutral500,
+      itemSelectedColor: colors.primary,
+      itemHoverColor: colors.neutral800,
+      inkBarColor: colors.primary,
+      cardBg: colors.backgroundCard,
+    },
+    
+    // Badge
+    Badge: {
+      fontSize: typography.fontSizes.small,
+      fontWeight: typography.fontWeights.semibold,
+      textFontSize: typography.fontSizes.tiny,
+    },
+    
+    // Tag
+    Tag: {
+      borderRadiusSM: borderRadius.subtle,
+      defaultBg: colors.neutral40,
+      defaultColor: colors.neutral800,
+      fontSize: typography.fontSizes.small,
+    },
+    
+    // Alert
+    Alert: {
+      borderRadiusLG: borderRadius.base,
+      paddingContentHorizontalLG: spacing.base,
+      paddingContentVerticalLG: spacing.md,
+    },
+    
+    // Message
+    Message: {
+      contentBg: colors.backgroundCard,
+      contentPadding: 8px 16px,
+    },
+    
+    // Notification
+    Notification: {
+      paddingContentHorizontal: spacing.base,
+      paddingContentVertical: spacing.base,
+      borderRadiusLG: borderRadius.base,
+    },
+    
+    // Tooltip
+    Tooltip: {
+      colorBgSpotlight: colors.neutral900,
+      borderRadius: borderRadius.subtle,
+      paddingSM: spacing.xs,
+    },
+    
+    // Popover
+    Popover: {
+      borderRadiusLG: borderRadius.base,
+      boxShadow: shadows.dropdown,
+    },
+    
+    // Drawer
+    Drawer: {
+      paddingLG: spacing.lg,
+      borderRadiusLG: 0,
+    },
+    
+    // Progress
+    Progress: {
+      defaultColor: colors.primary,
+      remainingColor: colors.neutral40,
+      circleTextColor: colors.neutral800,
+    },
+    
+    // Skeleton
+    Skeleton: {
+      borderRadiusSM: borderRadius.subtle,
+      gradientFromColor: colors.neutral40,
+      gradientToColor: colors.neutral30,
+    },
+    
+    // Avatar
+    Avatar: {
+      borderRadius: borderRadius.round,
+      colorTextPlaceholder: colors.neutral10,
+    },
+    
+    // Breadcrumb
+    Breadcrumb: {
+      itemColor: colors.neutral500,
+      lastItemColor: colors.neutral800,
+      linkColor: colors.neutral500,
+      linkHoverColor: colors.primary,
+      separatorColor: colors.neutral400,
+    },
+    
+    // Pagination
+    Pagination: {
+      borderRadius: borderRadius.subtle,
+      itemBg: "transparent",
+      itemSize: 32,
+    },
+    
+    // Steps
+    Steps: {
+      iconSize: 32,
+      iconSizeSM: 24,
+      dotSize: 8,
+    },
+    
+    // Form
+    Form: {
+      labelFontSize: typography.fontSizeBase,
+      labelColor: colors.neutral800,
+      labelHeight: 32,
+      verticalLabelPadding: 0 0 4px,
+      itemMarginBottom: spacing.lg,
+    },
+    
+    // DatePicker
+    DatePicker: {
+      controlHeight: 32,
+      controlHeightLG: 40,
+      controlHeightSM: 24,
+      borderRadius: borderRadius.subtle,
+      cellHoverBg: colors.backgroundHover,
+      cellActiveWithRangeBg: colors.infoLight,
+    },
+    
+    // Upload
+    Upload: {
+      actionsColor: colors.neutral500,
+    },
+    
+    // Switch
+    Switch: {
+      handleSize: 18,
+      innerMinMargin: 6,
+      innerMaxMargin: 24,
+      trackHeight: 22,
+      trackMinWidth: 44,
+      trackPadding: 2,
+    },
+    
+    // Checkbox & Radio
+    Checkbox: {
+      borderRadiusSM: borderRadius.subtle,
+      size: 16,
+    },
+    
+    Radio: {
+      size: 16,
+      dotSize: 8,
+    },
+    
+    // Rate
+    Rate: {
+      starSize: 20,
+      starColor: colors.warning,
+    },
+    
+    // Slider
+    Slider: {
+      railSize: 4,
+      handleSize: 14,
+      handleSizeHover: 16,
+      dotSize: 8,
+      railBg: colors.neutral50,
+      trackBg: colors.primary,
+    },
+    
+    // Timeline
+    Timeline: {
+      tailColor: colors.neutral50,
+      dotBg: colors.backgroundCard,
+      dotBorderWidth: 2,
+    },
+    
+    // Divider
+    Divider: {
+      colorSplit: colors.neutral50,
+    },
+    
+    // List
+    List: {
+      itemPadding: 12px 0,
+      itemPaddingSM: 8px 16px,
+      itemPaddingLG: 16px 24px,
+    },
+    
+    // Dropdown
+    Dropdown: {
+      paddingBlock: spacing.xs,
+      borderRadiusLG: borderRadius.base,
+      boxShadowSecondary: shadows.dropdown,
+    },
+    
+    // Cascader  
+    Cascader: {
+      controlHeight: 32,
+      controlItemWidth: 200,
+      borderRadius: borderRadius.subtle,
+    },
+    
+    // Tree
+    Tree: {
+      titleHeight: 32,
+      nodeHoverBg: colors.backgroundHover,
+      nodeSelectedBg: colors.backgroundActive,
+    },
+    
+    // Transfer
+    Transfer: {
+      headerHeight: 40,
+      itemHeight: 32,
+      itemHoverBg: colors.backgroundHover,
+      itemPaddingBlock: spacing.xs,
+    },
+    
+    // Calendar
+    Calendar: {
+      fullBg: colors.backgroundCard,
+      fullPanelBg: colors.backgroundCard,
+      itemActiveBg: colors.infoLight,
+    },
+  },
+};
+
+// -------------------------- EXPORTS --------------------------
+
+export const getThemes = () => {
+  return {
+    theme1,
+    atlassianTheme,
+  };
+};
+
+export const getDesignTokens = () => {
+  return {
+    colors,
+    typography,
+    spacing,
+    borderRadius,
+    shadows,
+  };
+};
+EOF
+
+
+
 # Tailwind config
 cat > tailwind.config.js <<EOF
 /** @type {import('tailwindcss').Config} */
@@ -110,12 +625,15 @@ EOF
 cat > src/App.js <<EOF
 import React from "react";
 import { App, ConfigProvider } from "antd";
+import { getThemes } from "utils/theme";
 import AppRoot from "screen/00_Nav/app_root";
 
 
+const { atlassianTheme } = getThemes();
+
 const MyApp = () => {
   return (
-    <ConfigProvider theme={{}}>
+    <ConfigProvider theme={atlassianTheme}>
       <App>
         <AppRoot />
       </App>
@@ -2383,6 +2901,127 @@ cat > tailwind.config.js <<EOF
 module.exports = {
   content: ["./src/**/*.{html,js}"],
   plugins: [],
+   theme: {
+    extend: {
+      // Atlassian Design System Colors
+      colors: {
+        // Primary
+        "atlassian-primary": "#0052CC",
+        "atlassian-primary-hover": "#0065FF",
+        "atlassian-primary-active": "#0747A6",
+        
+        // Status Colors (Task States)
+        "atlassian-success": "#00875A",
+        "atlassian-success-hover": "#00A572",
+        "atlassian-success-light": "#E3FCEF",
+        
+        "atlassian-warning": "#FFAB00",
+        "atlassian-warning-hover": "#FFC400",
+        "atlassian-warning-light": "#FFF0B3",
+        
+        "atlassian-info": "#0065FF",
+        "atlassian-info-hover": "#2684FF",
+        "atlassian-info-light": "#DEEBFF",
+        
+        "atlassian-error": "#DE350B",
+        "atlassian-error-hover": "#FF5630",
+        "atlassian-error-light": "#FFEBE6",
+        
+        // Neutral Scale
+        "atlassian-neutral-900": "#091E42",
+        "atlassian-neutral-800": "#172B4D",
+        "atlassian-neutral-700": "#253858",
+        "atlassian-neutral-600": "#344563",
+        "atlassian-neutral-500": "#505F79",
+        "atlassian-neutral-400": "#5E6C84",
+        "atlassian-neutral-300": "#6B778C",
+        "atlassian-neutral-200": "#7A869A",
+        "atlassian-neutral-100": "#8993A4",
+        "atlassian-neutral-90": "#97A0AF",
+        "atlassian-neutral-80": "#A5ADBA",
+        "atlassian-neutral-70": "#B3BAC5",
+        "atlassian-neutral-60": "#C1C7D0",
+        "atlassian-neutral-50": "#DFE1E6",
+        "atlassian-neutral-40": "#EBECF0",
+        "atlassian-neutral-30": "#F4F5F7",
+        "atlassian-neutral-20": "#FAFBFC",
+        "atlassian-neutral-10": "#FFFFFF",
+        
+        // Semantic Colors (shortcuts)
+        "atlassian-todo": "#0065FF",
+        "atlassian-inprogress": "#FFAB00",
+        "atlassian-done": "#00875A",
+      },
+      
+      // Spacing (4px grid system)
+      spacing: {
+        "atlassian-xs": "4px",
+        "atlassian-sm": "8px",
+        "atlassian-md": "12px",
+        "atlassian-base": "16px",
+        "atlassian-lg": "24px",
+        "atlassian-xl": "32px",
+        "atlassian-xxl": "40px",
+        "atlassian-xxxl": "48px",
+      },
+      
+      // Border Radius
+      borderRadius: {
+        "atlassian-subtle": "3px",
+        "atlassian": "4px",
+        "atlassian-round": "50%",
+      },
+      
+      // Box Shadows
+      boxShadow: {
+        "atlassian-card": "0 1px 1px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31)",
+        "atlassian-card-hover": "0 4px 8px -2px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31)",
+        "atlassian-modal": "0 0 0 1px rgba(9, 30, 66, 0.08), 0 2px 4px 1px rgba(9, 30, 66, 0.08)",
+        "atlassian-dropdown": "0 4px 8px -2px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31)",
+      },
+      
+      // Typography
+      fontFamily: {
+        "atlassian": [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "'Segoe UI'",
+          "'Roboto'",
+          "'Oxygen'",
+          "'Ubuntu'",
+          "'Cantarell'",
+          "'Fira Sans'",
+          "'Droid Sans'",
+          "'Helvetica Neue'",
+          "sans-serif",
+        ],
+      },
+      
+      fontSize: {
+        "atlassian-tiny": "11px",
+        "atlassian-small": "12px",
+        "atlassian-base": "14px",
+        "atlassian-h5": "16px",
+        "atlassian-h4": "20px",
+        "atlassian-h3": "24px",
+        "atlassian-h2": "29px",
+        "atlassian-h1": "35px",
+      },
+      
+      fontWeight: {
+        "atlassian-normal": "400",
+        "atlassian-medium": "500",
+        "atlassian-semibold": "600",
+        "atlassian-bold": "700",
+      },
+      
+      lineHeight: {
+        "atlassian-tight": "1.2",
+        "atlassian-base": "1.4286",
+        "atlassian-relaxed": "1.5",
+      },
+    },
+  }
 };
 
 EOF
@@ -2579,6 +3218,361 @@ export const useJobDetailFlow = () => {
 // =================== TẤT CẢ CÁC MẪU NÀY CHỈ LÀ MÔ PHỎNG ====================// 
 EOF
 
+
+
+mkdir -p src/screen/1000_[Sample]
+mkdir -p src/screen/1000_[Sample]/component
+mkdir -p src/screen/1000_[Sample]/trigger
+mkdir -p src/screen/1000_[Sample]/dialog
+
+cat > src/screen/1000_[Sample]/[domain].js <<EOF
+import React from "react";
+import { URL } from "screen/00_Nav/url";
+import { Layout, Row, Col } from "antd";
+import LayoutHeader from "screen/00_Nav/layout/layout_header";
+import SectionCointaner from "component/sections/section_container";
+import TriggerInit from "./trigger/trigger_init";
+import DebugHeader from "./component/debug_header";
+import DebugAdd from "./component/debug_add";
+import DebugTable from "./component/debug_table";
+import DialogDebugJob from "./dialog/dialog_debug_add";
+
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+
+const breadCrum = [
+  {
+    title: "Home",
+    url: null,
+  },
+  {
+    title: "Debug Job",
+    url: URL.debugJob,
+  },
+];
+
+const DebugJobScreen = () => {
+  // -------------------------- VAR -----------------------------
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  const renderBody = () => {
+    return (
+      <Row gutter={[10, 20]}>
+        <Col xl={18} lg={18} md={18} xs={24}>
+          <DebugHeader />
+        </Col>
+        <Col align="right" xl={6} lg={6} md={6} xs={24}>
+          <DebugAdd />
+        </Col>
+        <Col xl={24} lg={24} md={24} xs={24}>
+          <DebugTable />
+        </Col>
+      </Row>
+    );
+  };
+
+  // -------------------------- MAIN ----------------------------
+  return (
+    <Layout id="bailiff-screen">
+      <LayoutHeader title="Virtual Machine Management" />
+      <SectionCointaner breadCrum={breadCrum}>
+        <div style={{ padding: 24 }}>
+          <Row justify={"center"}>
+            <Col xl={24} lg={24} md={24} xs={24}>
+              {renderBody()}
+            </Col>
+          </Row>
+        </div>
+      </SectionCointaner>
+      <DialogDebugJob />
+      <TriggerInit />
+    </Layout>
+  );
+};
+export default DebugJobScreen;
+EOF
+
+
+cat > src/screen/1000_[Sample]/trigger/trigger_init.js <<EOF
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import {
+  snapDefaultDebug,
+  unSnapDefaultDebug,
+} from "store/bailiff/(default)/debug/default_debug.action";
+//
+//component
+//redux
+//selector
+//actions
+export const TriggerInit = () => {
+  // -------------------------- VAR ----------------------------
+  // -------------------------- STATE --------------------------
+  // -------------------------- REDUX --------------------------
+  const dispatch = useDispatch();
+  // -------------------------- USE EFFECT ---------------------
+  useEffect(() => {
+    dispatch(snapDefaultDebug());
+    return () => dispatch(unSnapDefaultDebug());
+  }, [dispatch]);
+  // -------------------------- RETURN --------------------------
+  return <></>;
+};
+export default TriggerInit;
+EOF
+
+cat > src/screen/1000_[Sample]/dialog/dialog_debug_add.js <<EOF
+import FormInput from "component/form/form_input";
+import React from "react";
+import { Button, Col, Divider, Form, Modal, Row } from "antd";
+import { useSelector } from "react-redux";
+import { defaultDebugOpenAddSelector } from "store/bailiff/(default)/debug/default_debug.selector";
+import { useActionDefaultDebug } from "hook/base/debug/useActionDefaultDebug";
+import { PlusOutlined } from "@ant-design/icons";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const DialogDebugJob = () => {
+  // -------------------------- VAR -----------------------------
+  const { loading, handleCancel, handleAddJob } = useActionDefaultDebug();
+  const [form] = Form?.useForm();
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  const open = useSelector(defaultDebugOpenAddSelector);
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return (
+    <Modal
+      onCancel={() => handleCancel(form)}
+      open={open}
+      title="Thêm Job Debug"
+      footer={null}
+    >
+      <Divider />
+      <Form layout="vertical" form={form}>
+        <Row>
+          <Col xl={24} lg={24} md={24} xs={24}>
+            <FormInput
+              name="job"
+              label="Tên Job"
+              placeholder="Nhập Job id"
+              rules={[{ required: true, message: "Vui lòng nhập tên job" }]}
+            />
+          </Col>
+          <Divider />
+          <Col align="right" xl={24} lg={24} md={24} xs={24}>
+            <Button
+              loading={loading}
+              onClick={() => handleAddJob(form)}
+              icon={<PlusOutlined />}
+              type="primary"
+              className="min-h-[40px] rounded-sm"
+            >
+              Thêm Job
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </Modal>
+  );
+};
+export default DialogDebugJob;
+EOF
+
+cat > src/screen/1000_[Sample]/component/debug_table.js <<EOF
+import { Table, Tag } from "antd";
+import { useActionDefaultDebugRefine } from "hook/base/debug/useActionDefaultDebug";
+import React from "react";
+import { getTime } from "util/time.function";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const DebugTable = () => {
+  // -------------------------- VAR -----------------------------
+  const { data } = useActionDefaultDebugRefine();
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  const columns = [
+    {
+      title: "Tạo lúc",
+      dataIndex: "createAt",
+      key: "createAt",
+      width: 200,
+      render: (value) => renderTimer(value),
+      sorter: (a, b) => a.createAt - b.createAt,
+    },
+    {
+      title: "Tên Job",
+      dataIndex: "document",
+      key: "document",
+      width: 200,
+
+      render: (value) => <Tag>{value}</Tag>,
+    },
+    {
+      title: "SL debug log",
+      dataIndex: "remapping",
+      key: "remapping",
+      align: "center",
+    },
+    {
+      title: "Kết quả",
+      dataIndex: "result",
+      key: "result",
+      render: (_, record) => getResult(record),
+    },
+    {
+      title: "status",
+      dataIndex: "status",
+      key: "status",
+      render: (value) => <Tag>{value}</Tag>,
+    },
+  ];
+
+  const renderTimer = (value) => {
+    const label = getTime(value, "YYYY-MM-DD HH:mm:ss");
+    return <span style={{ fontSize: 10 }}>{label}</span>;
+  };
+
+  const getResult = (record) => {
+    const result = record?.result || {};
+    const mapped = Object.entries(result)?.map(([key, value]) => {
+      const title = OBJECT[key];
+      return { title, value };
+    });
+
+    return (
+      <div>
+        {mapped?.map((item, index) => (
+          <div key={index}>
+            +<b className="mx-1">{item?.title}:</b>
+            {item?.value}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // -------------------------- MAIN ----------------------------
+  return (
+    <Table
+      rowKey={"id"}
+      bordered
+      size="middle"
+      columns={columns}
+      dataSource={data}
+      loading={data === null}
+    />
+  );
+};
+export default DebugTable;
+
+const OBJECT = {
+  guess: "Dự đoán",
+  current: "Bước",
+  currentTracker: "Đối chiếu",
+  next: "Tiếp theo",
+  nextTracker: "Đối chiếu tiếp theo",
+  note: "Ghi chú",
+};
+EOF
+
+cat > src/screen/1000_[Sample]/component/debug_header.js <<EOF
+import React from "react";
+import { Tag, Typography } from "antd";
+import { useActionDefaultDebugRefine } from "hook/base/debug/useActionDefaultDebug";
+
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const DebugHeader = () => {
+  // -------------------------- VAR -----------------------------
+  const { total } = useActionDefaultDebugRefine();
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return (
+    <div>
+      <Typography.Title style={{ margin: "0px" }} level={4}>
+        Danh sách debug job{" "}
+        <Tag style={{ borderRadius: 30 }}>Total: {total}</Tag>
+      </Typography.Title>
+      <Typography.Text type="secondary">
+        Kết quả debug sẽ hiển thị trong màn hình này
+      </Typography.Text>
+    </div>
+  );
+};
+export default DebugHeader;
+EOF
+
+cat > src/screen/1000_[Sample]/component/debug_add.js <<EOF
+import { PlusOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+import { useActionDefaultDebug } from "hook/base/debug/useActionDefaultDebug";
+import React from "react";
+//
+//component
+//redux
+//selector
+//actions
+//utils
+//hook
+//str
+const DebugAdd = () => {
+  // -------------------------- VAR -----------------------------
+  const { handleOpen } = useActionDefaultDebug();
+  // -------------------------- STATE ---------------------------
+  // -------------------------- REDUX ---------------------------
+  // -------------------------- FUNCTION ------------------------
+  // -------------------------- EFFECT --------------------------
+  // -------------------------- DATA FUNCTION -------------------
+  // -------------------------- RENDER --------------------------
+  // -------------------------- MAIN ----------------------------
+  return (
+    <Button onClick={handleOpen} type="primary" icon={<PlusOutlined />}>
+      Thêm Job Debug
+    </Button>
+  );
+};
+export default DebugAdd;
+EOF
 
 
  
