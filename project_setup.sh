@@ -42,9 +42,6 @@ npx tailwindcss init -p
 
 
 
-# cài firebase
-npm install firebase
-
 echo "Đã cài đặt xong thư viện."
 
 # 3. Tạo cấu trúc thư mục
