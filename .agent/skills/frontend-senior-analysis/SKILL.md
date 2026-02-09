@@ -17,7 +17,7 @@ Bạn là **Frontend Senior Analysis** - chuyên gia chuyển đổi UI mockup (
 
 ## Output Deliverables
 
-- **Location**: 
+- **Location**:
   - Screen components: `src/screen/[NN_Name]/` (NN là số thứ tự)
   - Reusable components: `src/component/[category]/`
 - **Structure**: React functional component với section headers chuẩn
@@ -30,7 +30,7 @@ Bạn là **Frontend Senior Analysis** - chuyên gia chuyển đổi UI mockup (
 
 ### Step 1: Analyze HTML Structure
 
-1. Đọc file HTML mockup từ `agent/ui/`
+1. Đọc file HTML mockup từ `ui/`
 2. Xác định:
    - Main layout structure (header, main, footer, sidebar)
    - Reusable components (buttons, forms, cards)
@@ -53,6 +53,7 @@ Is it a full page/screen?
 ```
 
 **Screen Numbering:**
+
 - `00_Nav` - Navigation components
 - `01_Login` - Auth screens
 - `03_Bailiff` - Main domain screens
@@ -70,7 +71,6 @@ import SomeComponent from "component/some_component";
 import { someSelector } from "store/some.selector";
 import { someAction } from "store/some.action";
 import useSomeHook from "hook/useSomeHook";
-import "./style.css";
 
 const ComponentName = (props) => {
   // -------------------------- VAR --------------------------
@@ -96,7 +96,7 @@ const ComponentName = (props) => {
 
   // -------------------------- DATA FUNCTION -------------------
   const processData = (data) => {
-    return data?.map(item => item.id);
+    return data?.map((item) => item.id);
   };
 
   // -------------------------- RENDER --------------------------
@@ -105,11 +105,7 @@ const ComponentName = (props) => {
   };
 
   // -------------------------- MAIN ----------------------------
-  return (
-    <div>
-      {renderItem()}
-    </div>
-  );
+  return <div>{renderItem()}</div>;
 };
 export default ComponentName;
 ```
@@ -118,16 +114,16 @@ export default ComponentName;
 
 **Conversion Rules:**
 
-| HTML Pattern | React/JSX Pattern |
-|--------------|-------------------|
-| `<div class="...">` | `<div className="...">` |
-| `class="button"` | `className="button"` |
-| `onclick="..."` | `onClick={handleClick}` |
-| `<input type="text">` | `<Input />` (Ant Design) |
-| Static text | May need i18n consideration |
-| Inline styles | Convert to Tailwind classes |
+| HTML Pattern          | React/JSX Pattern           |
+| --------------------- | --------------------------- |
+| `<div class="...">`   | `<div className="...">`     |
+| `class="button"`      | `className="button"`        |
+| `onclick="..."`       | `onClick={handleClick}`     |
+| `<input type="text">` | `<Input />` (Ant Design)    |
+| Static text           | May need i18n consideration |
 
 **TailwindCSS Usage:**
+
 ```javascript
 // ✅ CORRECT - Tailwind utilities
 <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
@@ -140,6 +136,7 @@ export default ComponentName;
 ```
 
 **Ant Design Integration:**
+
 ```javascript
 // Use Ant Design for UI components
 import { Button, Input, Form, Table, Modal } from "antd";
@@ -147,34 +144,41 @@ import { Button, Input, Form, Table, Modal } from "antd";
 // ✅ Example
 <Button type="primary" onClick={handleSubmit}>
   Lưu
-</Button>
+</Button>;
 ```
 
 ### Step 5: Implement Responsive Design
 
 **Breakpoints (TailwindCSS):**
+
 - `sm:` - 640px (mobile landscape)
 - `md:` - 768px (tablet)
 - `lg:` - 1024px (desktop)
 - `xl:` - 1280px (large desktop)
 
 **Example:**
+
 ```javascript
 <div className="
-  flex-col sm:flex-row 
+  flex-col sm:flex-row
   p-2 md:p-4 lg:p-6
   text-sm md:text-base lg:text-lg
 ">
 ```
 
 **Use `useResponsive` Hook (if needed):**
+
 ```javascript
 import useResponsive from "hook/useResponsive";
 
 const { isMobile, isTablet, isDesktop } = useResponsive();
 
-const renderMobile = () => { /* ... */ };
-const renderDesktop = () => { /* ... */ };
+const renderMobile = () => {
+  /* ... */
+};
+const renderDesktop = () => {
+  /* ... */
+};
 
 return isMobile ? renderMobile() : renderDesktop();
 ```
@@ -183,18 +187,20 @@ return isMobile ? renderMobile() : renderDesktop();
 
 **Decision Matrix:**
 
-| Data Type | Storage Location |
-|-----------|-----------------|
-| UI-only state (toggle, modal open) | Local `useState` |
-| Form data (before submit) | Local `useState` or Ant Design Form |
-| Shared across components | Redux (`src/store/`) |
-| User auth state | Redux (`src/store/user/`) |
-| Domain data (from Firebase) | Redux (`src/store/[domain]/`) |
+| Data Type                          | Storage Location                    |
+| ---------------------------------- | ----------------------------------- |
+| UI-only state (toggle, modal open) | Local `useState`                    |
+| Form data (before submit)          | Local `useState` or Ant Design Form |
+| Shared across components           | Redux (`src/store/`)                |
+| User auth state                    | Redux (`src/store/user/`)           |
+| Domain data (from Firebase)        | Redux (`src/store/[domain]/`)       |
 
 **If Redux is needed:**
+
 1. DO NOT create Redux files yet (that's Senior Firebase Operation's job)
 2. ADD COMMENT indicating Redux selector/action needed
 3. Use placeholder:
+
 ```javascript
 // -------------------------- REDUX --------------------------
 // TODO: Need selector for bailiff list
@@ -210,18 +216,21 @@ const bailiffList = []; // Temporary placeholder
 Before marking conversion as complete, verify:
 
 ### Structure ✅
+
 - [ ] File location correct (`src/screen/` or `src/component/`)
 - [ ] File naming: `snake_case.js`
 - [ ] Component naming: `PascalCase`
 - [ ] All section headers present in order
 
 ### Code Standards ✅
+
 - [ ] Indentation: 2 spaces
 - [ ] Strings: Double quotes (`""`)
 - [ ] Semicolons: Always (`;`)
 - [ ] Empty lines between sections
 
 ### Import Order ✅
+
 1. [ ] React / Third-party libs
 2. [ ] Local components
 3. [ ] Redux (actions/selectors)
@@ -229,18 +238,21 @@ Before marking conversion as complete, verify:
 5. [ ] Assets / CSS
 
 ### Functionality ✅
+
 - [ ] All interactive elements have handlers
 - [ ] Props destructured properly
 - [ ] No console errors
 - [ ] Responsive on mobile/tablet/desktop
 
 ### Performance ✅
+
 - [ ] No unnecessary re-renders
 - [ ] `useEffect` dependencies correct
 - [ ] Conditional rendering optimized
 - [ ] Large lists use `renderItem()` pattern
 
 ### Styling ✅
+
 - [ ] TailwindCSS used (not inline styles)
 - [ ] Ant Design components integrated
 - [ ] Responsive breakpoints applied
@@ -315,9 +327,7 @@ const DetailPreview = () => {
 
   // -------------------------- MAIN ----------------------------
   return (
-    <div className="flex h-full w-full flex-col bg-white">
-      {renderHeader()}
-    </div>
+    <div className="flex h-full w-full flex-col bg-white">{renderHeader()}</div>
   );
 };
 export default DetailPreview;
@@ -330,6 +340,7 @@ export default DetailPreview;
 ### ❌ COMMON MISTAKES TO AVOID
 
 **1. Mixing Logic in Components**
+
 ```javascript
 // ❌ WRONG - API call in component
 const MyComponent = () => {
@@ -345,6 +356,7 @@ const MyComponent = () => {
 ```
 
 **2. Wrong Section Order**
+
 ```javascript
 // ❌ WRONG
 const MyComponent = () => {
@@ -360,6 +372,7 @@ const MyComponent = () => {
 ```
 
 **3. Inline Styles Instead of Tailwind**
+
 ```javascript
 // ❌ WRONG
 <div style={{padding: '16px', display: 'flex'}}>
@@ -386,6 +399,7 @@ After completing conversion:
 **CRITICAL:** Minimize re-renders at all costs.
 
 1. **useEffect Control:**
+
 ```javascript
 // ❌ WRONG - Missing dependencies
 useEffect(() => {
@@ -399,6 +413,7 @@ useEffect(() => {
 ```
 
 2. **Conditional Rendering:**
+
 ```javascript
 // ✅ Efficient pattern
 const renderButton = () => {
@@ -409,6 +424,7 @@ return <div>{renderButton()}</div>;
 ```
 
 3. **No Unnecessary State:**
+
 ```javascript
 // ❌ WRONG - Derived state
 const [total, setTotal] = useState(0);
@@ -419,6 +435,14 @@ useEffect(() => {
 // ✅ CORRECT - Compute directly
 const total = items?.length || 0;
 ```
+
+# BEST PRACTICES
+
+- Xài Tailwind css hết, không xài style.css nhé, không xài pure css.
+
+# THAM CHIẾU:
+
+- BẠN LẤY VÍ DỤ TỪ src/screen/03_Bailiff/01_List/bailiff_list.js nhé.
 
 ---
 
