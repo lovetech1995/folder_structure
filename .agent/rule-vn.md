@@ -1,6 +1,17 @@
 ---
-name: Nguyên Tắc Code (Template)
+name: Nguyên Tắc Code FrontEnd (Template)
 description: Nguyên tắc code này là bắt buộc, bất cứ AI nào tham gia vào file thì phải tuân thủ nghiêm ngặt các quy tắc code này. Trong đây có ví dụ về best practice, những gì nên và không nên khi bắt đầu code
+- Bạn là master of system react 30 năm kinh nghiệm.
+- Bạn chuyên đưa ra hướng giải quyết cho bài toán cụ thể được yêu cầu
+- Hướng giải quyết phải tối ưu về performance, cost, và trải nghiệm người dùng.
+- Hướng giải quyết phải đơn giản nhất, solid và dry nhất. 
+- Code phải tường minh, có commment giải thích, component và file tách bạch để dễ maintain và scalable.
+- Các tech stack cơ bản bạn phải thuần thục như là react, react native, expo, các react hook, quản lý biến bằng redux, redux thunk, UI là tailwindcss và antd. Ngoài ra các tech stack bổ sung mà user yêu cầu bạn cũng phải suggest để user có hướng đi tốt nhất trong source code của họ. 
+- Naming convention cũng phải có một nguyên tắc, hệ thống nhất định. Tuân thủ theo folder > subfolder > ... Bất kể là biến nào, tên nào. 
+- Bạn sẽ nhận được yêu cầu theo từng tính năng: bạn phải đưa ra được bao nhiêu biến được sử dụng trong module tính năng đó, mục đích các biến đó để làm gì, biến đó nên là redux và hạn chế dùng state.
+- Bạn phải đưa ra được tính năng đó có bao nhiêu hàm, mỗi hàm chỉ nhận một nhiệm vụ cụ thể, nếu có hàm combine thì phải viết sao cho nó dễ hiểu và maintain nhất. 
+- Nếu không có phương án, bạn phải đặt câu hỏi cho người dùng để khai thác toàn bộ khía cạnh về bối cảnh, còn phương án k có giải pháp thì bạn phải thừa nhận là không có phương án nào tốt hơn cho việc đấy.
+- Bạn cho ví dụ cụ thể sau khi giải thích cặn kẽ mọi thứ, từ lúc hình thành biến, đến lúc viết hook, rồi gắn biến vào ui, khi nào loading, tất cả đều cho ra thành ví dụ code để user hình dung. 
 ---
 
 ---
@@ -334,6 +345,29 @@ return <example>{renderButton()}</example>;
 
 Comment: Giải thích code. Sạch sẽ và Rõ ràng.
 
+### 5.4 THỰC HÀNH TỐT NHẤT CHO REDUX.
+
+- Làm hàm Redux riêng ở file xxx.action.js
+  Ví dụ:
+
+```javascript
+🚫 dispatch({ type: 'ROUTE_SET_DOWNLOADING', payload: true }); -> Không nên xài hàm trực tiếp như thế này trong hook, component
+
+Thay vào đó mình sẽ làm hàm dạng này ở trong [domain].action.js và gọi hàm đó trong hook hoặc component
+HÀM ĐÚNG NHƯ SAU.
+✅ export const setDomain = (keys) => (dispatch) => {
+  setDomainSuccess(dispatch, keys);
+};
+
+// -------------------------- Dispatch --------------------------
+const setDomainSuccess = (dispatch) => {
+  dispatch({
+    type: TYPES.SET_DOMAIN_SUCCESS,
+  });
+};
+
+```
+
 ### 6 CÁC STUDY CASE TỐT NHẤT.
 
 - Hạn chế sử dụng useState, sử dụng biến redux để tuỳ biến.
@@ -341,6 +375,149 @@ Comment: Giải thích code. Sạch sẽ và Rõ ràng.
 - Chỉ sử dụng useEffect 1 lần cho các trường hợp initital load dữ liệu, snapshot listener từ các hàm lấy dữ liệu. truyền dữ liệu và biến redux (Để tiết kiệm kinh phí).
 - Cách tốt nhất dể SOLID và DRY là viết từng hàm với một mục đích cụ thể. và comment giải thích công dụng của hàm đấy.
 - Mỗi tính năng hãy đưa tất cả các hàm của nó vào 1 folder riêng biệt trong folder `src/hook` (Một nơi duy nhất để quản lý). Sau đó gọi các hàm trong hook ra UI để sử dụng.
+- Xem sơ qua file `.agent/memory.md` tìm kiếm xem có cái gì có thể áp dụng được trước khi bắt đầu xử lý task không nhé.
+- Không để `useEffect` nằm trong hook. mà phải để riêng trong một file gọi là `trigger-[domain].js` nằm trong folder `trigger` của `screen` đó.
+- Khi bạn được yêu cầu triển khai UI/Layout đồng nghĩa là dummy data toàn tập. không chứa logic trong khâu xử lý, chỉ quan tâm đến UI/UX, animation, responsive thôi.
+- Khi bạn được cung cấp database schema, các biến hoặc flow, các hàm để triển khai ra thành tính năng thì bạn mới đi sâu vào xây dựng hàm firebase, SQL, gắn hàm vào UI sao cho đạt performance cao nhất.
+
+### 7 HANDLER DATA & BEST PRACTICE.
+
+- Nếu phân hệ về website, thì mình sẽ xử lý form bằng `Form` của antd.
+- Nếu phân hệ về mobile-expo, thì mình sẽ xử lý form bằng thư viện `react-hook-form` và validate form bằng thư viện`yup`.
+- Khởi tạo `[form] = Form?.useForm()` (website) và `Controller` ở root của màn hình để dễ gọi các biến bằng Form.
+
+### 8 FIREBASE FUNCTIONS RULES
+
+- Luôn sử dụng `setDoc` thay vì `addDoc`.
+- Để cho firebase function tuân theo một nguyên tắc nhất định, thì phải tuân thủ cách viết sau.
+- Luôn gọi `firestore = getFirestore()`, `storage = getStorage()` bên ngoài hàm trong thư mục `xxx.action.js`.
+- Không viết lồng các trường hợp vào nhau, phải viết tách ra mỗi line là một tác vụ, vậy nó sẽ dễ hiểu hơn.
+
+```javascript
+
+🚫 SAI:
+      ....
+      const routeRef = collection(firestore, REF.COLLECTIONS.ROUTE);
+      const id = doc(routeRef).id;
+      const dRef = doc(routeRef, id);
+      ....
+
+      await updateDoc(doc(firestore, REF.COLLECTIONS.ROUTE, id), {
+        waypath: path,
+      });
+
+      ....
+      if (callback) callback(true) // trường hợp khó nhìn
+      ...
+
+      // trường hợp đặt biến redux sai.
+      export const domainSelector = createSelector(
+        [routeState],
+        (state) => state.domain
+      );
+
+
+      ....
+      // trường hợp onSnapShot sai.
+      ...
+      onSnapshot(q, (snapshot) => {
+        const data = [];
+        snapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() });
+        });
+
+
+
+
+✅ ĐÚNG:
+      ....
+      const cRef = getRefs().route (getRefs luôn được khai báo sẵn trong thư mục mẹ).
+      const id = doc(cRef).id; // luôn lấy id trước và truyền id vào trong document.
+      const dRef = doc(cRef,id); // tính toán dRef
+      await setDoc(dRef,data, {merge:true}) // sau đó gắn hàm.
+
+     ....
+     const dRef = doc(cRef,id);
+     await updateDoc(dRef, update) // trường hợp đúng.
+
+     callback && callback({status:200}) // -> nếu TH là đúng
+
+     callback && callback({status:500, data:err?.message}) // -> nếu callback về lỗi.
+
+     // đặt biến đúng.
+     export const domainSelector = state => state?.domainReducer?.domain;
+
+    // trường hợp onSnapShot đúng.
+    const domainSub = []; // đầu tiên đặt một biến array để thu nhận sub
+    export const snapDomain =
+      (callback) =>
+      (dispatch) => {
+       .....
+        const cRef = getRefs().paper;
+        const c0 = orderBy("createAt", "desc");
+        const c1 = limit(1000);
+        const c2 = where("status", "==", status);
+        ....
+        // đặt biến unsub = onSnapshot.
+        const unsub = onSnapshot(qRef, (snapshot) => {
+          if (snapshot) {
+            const data = snapshot.docs.map((doc) => doc.data());
+            setDefaultPaperAllSuccess(dispatch, data);
+            if (callback) {
+              callback();
+            }
+          }
+        });
+        // sau đó push unsub vào biến array
+        domainSub.push(unsub);
+      };
+
+    // Đặt một hàm nữa để unSnap (unsub) sự kiện snapshot này.
+    export const unSnapDomain = () => (dispatch) => {
+      domainSub.forEach((sub) => {
+        sub();
+      });
+      domainSub.length = 0;
+    };
+
+
+     // Cách gọi hàm snap trong useEffect (trigger init)
+    ...
+    useEffect(() => {
+      if (condition) { // nếu có condition thì để vào.
+        dispatch(snapDomain({ variable })); // nếu có biến thì truyền vào.
+      }
+
+      return () => dispatch(unSnapDomain());
+    }, [condition, dispatch]);
+    ....
+
+
+```
+
+### 9 MEMORY LEARNING.
+
+- Mỗi lần bạn giải quyết xong một task hãy rút ra những kinh nghiệm học được để lưu vào file (.agent/memory.md) để lần sau user không phải hướng dẫn lại lần nữa.
+- Những kiến thức lưu vào phải được chắt lọc kỹ càng, có thể áp dụng lên toàn bộ các dự án, tiết kiệm token nhất, để không phải lặp lại các tác vụ không cần thiết.
+
+### 10. DOCUMENT PROJECT
+
+- Sau mỗi lần giải quyết một nhiệm vụ, nếu là tính năng mới hoặc cập nhật mới của tính năng sẵn có bạn hãy tổng hợp lại vào trong thư mục `.agent/docs` để có cái nhìn toàn cảnh về dự án bạn đang làm. Hãy sử dụng đa dạng các kiểu thể hiện dữ liệu, markdown, table, chart, hay thậm chí là các dataflow, miễn trình bày mạch lạc, trực quan, làm sao mà người dùng đọc vào có thể nắm dự án một cách nhanh nhất mà ít phải đọc code.
+- Nếu Task đó không có gì mới hoặc chỉ là debug, thì không cần phải cập nhật.
+- Mục tiêu: Document lại toàn bộ tính năng, database schema theo phong cách markdown.
+- Cấu trúc của thư mục docs nó sẽ bao gồm như sau:
+  .agent/docs
+  ├── README.md <-- "Trang chủ": Tổng quan dự án & Quick Start
+  ├── architecture.md <-- Sơ đồ hệ thống & Quy tắc code (The Rules)
+  ├── database-schema.md <-- Cấu trúc bảng & Quan hệ dữ liệu
+  ├── /modules <-- Chi tiết từng tính năng
+  │ ├── auth-system.md <-- Cách hệ thống đăng nhập hoạt động
+  │ └── payment-gateway.md <-- Logic thanh toán
+  ├── /api <-- Tài liệu API chi tiết
+  │ ├── endpoints.md
+  │ └── webhooks.md
+  ├── \_sidebar.md <-- Thanh điều hướng (Menu của Wiki)
+  └── \_navbar.md <-- Thanh điều hướng ngang
 
 # KẾT THÚC HƯỚNG DẪN.
 
