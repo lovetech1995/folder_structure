@@ -14,7 +14,11 @@ description: Nguyên tắc code này là bắt buộc, bất cứ AI nào tham g
 ---
 
 1. MỤC TIÊU CHUNG
-   Mọi file mới phải tuân thủ đúng cấu trúc, comment, tên file, export, error code, logger như trong project-cloud.txt. Không được thay đổi style, không thêm ESLint mới, không chuyển sang ES Module.
+   Mọi file mới phải tuân thủ đúng cấu trúc, comment, tên file, export, error code, logger như trong project-cloud.txt. Không được thay đổi style, không thêm ESLint mới, không chuyển sang ES Module. Không tự ý đổi tên hàm, Ví dụ khi viết output ra hàm cuối cùng.
+   `firestore-default-user-create-account` Khi tôi viết như thế này. Tức là lúc exports cuối cùng sẽ là `.account`
+
+   `-> exports.account = onDocumentCreated()`
+
 2. CẤU TRÚC THƯ MỤC (PHẢI GIỮ NGUYÊN)
    textfunctions/src/
    ├── api/ (Tất cả các hàm API CREATE/ UPDATE, DELETE, READ)
